@@ -8,7 +8,6 @@ import java.util.List;
 
 public interface RestaurantService {
 
-    //GET
     RestaurantDTO getRestaurantById(Long restaurantId);
 
     List<RestaurantDTO> getRestaurantsByLocation(Double latitude, Double longitude);
