@@ -21,75 +21,12 @@ public class RestaurantServiceImplementation implements RestaurantService{
     private final RestaurantRepository restaurantRepository;
     private final RestaurantDTOMapper restaurantDTOMapper;
 
-    /* private static String API_KEY;
-
-    @Value("${api.key}")
-    public void setApiKey(String apiKey) {
-        API_KEY = apiKey;
-    } */
-
     @Autowired
     public RestaurantServiceImplementation(RestaurantRepository restaurantRepository, RestaurantDTOMapper restaurantDTOMapper)
     {
         this.restaurantRepository = restaurantRepository;
         this.restaurantDTOMapper = restaurantDTOMapper;
     }
-
-    /*   @Override
-    public List<Restaurant> getRestaurantsByArea(String area) throws IOException
-    {
-            List<Restaurant> restaurants = new ArrayList<>();
-
-            //Constructing API url
-
-            String apiUrl = "https://api.yelp.com/v3/businesses/search?location="+area;
-
-            URL url = new URL(apiUrl);
-            HttpURLConnection connection =  (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            connection.setRequestProperty("Authorization", "Bearer "+API_KEY);
-
-            BufferedReader input = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            String line;
-            StringBuffer response = new StringBuffer();
-
-            while((line = input.readLine()) != null)
-            {
-                response.append(line);
-            }
-            input.close();
-
-            JSONObject jsonObject = new JSONObject(response.toString());
-            JSONArray businesses = jsonObject.getJSONArray("businesses");
-
-
-            for(int i = 0; i < businesses.length(); i++)
-            {
-                JSONObject business =  businesses.getJSONObject(i);
-                Boolean isClosed = business.getBoolean("is_closed");
-                if(!isClosed)
-                {
-                    String name = business.getString("name");
-                    JSONObject coordinates = business.getJSONObject("coordinates");
-                    Double latitude = coordinates.getDouble("latitude");
-                    Double longitude = coordinates.getDouble("longitude");
-                    JSONObject location = business.getJSONObject("location");
-                    String address = location.getString("address1") + ", " + location.getString("city") + " " + location.getString("zip_code");
-                    /*JSONArray categories = business.getJSONArray("categories");
-                    Cuisine cuisine = Cuisine.valueOf(categories.getJSONObject(0).getString("title").toUpperCase());*/
-           /*         Cuisine cuisine = null;
-                    Integer rating = business.getInt("rating");
-                    Double averagePrice = null; // TODO: extract average price from the "price" field
-                    String openingHours = null; // TODO: extract opening hours from the "hours" field
-
-
-                    Restaurant restaurant = new Restaurant(name, address,  averagePrice, openingHours, latitude, longitude, rating, cuisine);
-                    restaurants.add(restaurant);
-                }
-            }
-
-            return restaurants;
-    } */
 
     @Override
     public RestaurantDTO getRestaurantById(Long restaurantId)
@@ -103,8 +40,6 @@ public class RestaurantServiceImplementation implements RestaurantService{
 
         return restaurantDTOMapper.apply(restaurant);
     }
-
-
 
 
     /**
@@ -129,7 +64,7 @@ public class RestaurantServiceImplementation implements RestaurantService{
             double restaurantLongitude = restaurant.getLongitude();
             double distance = calculateDistance(latitude, longitude, restaurantLatitude, restaurantLongitude);
 
-            boolean isOpen = restaurant.isOpen(LocalTime.now());
+            boolean isOpen = restaurant.isOpen();
 
             if (distance <= ONE_MILE_IN_METERS && isOpen)
             {
@@ -172,5 +107,20 @@ public class RestaurantServiceImplementation implements RestaurantService{
         df.setRoundingMode(RoundingMode.DOWN);
 
         return Double.parseDouble(df.format(distance));
+    }
+
+    /**
+     * This method returns a list of all restaurants
+     *
+     * @return list of all restaurants.
+     */
+    @Override
+    public List<RestaurantDTO> getAllRestaurants()
+    {
+        List<Restaurant> allRestaurants =  restaurantRepository.findAll();
+
+        return allRestaurants.stream()
+                .map(restaurantDTOMapper)
+                .collect(Collectors.toList());
     }
 }

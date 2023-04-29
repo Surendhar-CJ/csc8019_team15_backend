@@ -1,10 +1,11 @@
 package com.app.foodfinder.entity;
 
 import jakarta.persistence.*;
+
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-
 
 @Entity
 @Table(name = "restaurant")
@@ -29,12 +30,6 @@ public class  Restaurant {
 
     @Column(name = "average_cost")
     private Double averageCost;
-
-    @Column(name = "opening_hours")
-    private String openingHours; //Format -> HH:MM
-
-    @Column(name = "closing_hours")
-    private String closingHours; //Format -> HH:MM
 
     @Column(name = "phone_number")
     public String phoneNumber;
@@ -64,22 +59,21 @@ public class  Restaurant {
     @OneToMany(mappedBy = "restaurant")
     private List<Review> reviews;
 
-
+    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
+    private List<RestaurantOperationHours> operationHours;
 
     public Restaurant()
     {
 
     }
 
-    public Restaurant(String name, String addressLine1, String addressLine2, String addressLine3, Double averageCost, String openingHours, String closingHours, String phoneNumber, Double latitude, Double longitude, Double overallRating, Cuisine cuisine, String imagesLink, String menu)
+    public Restaurant(String name, String addressLine1, String addressLine2, String addressLine3, Double averageCost, String phoneNumber, Double latitude, Double longitude, Double overallRating, Cuisine cuisine, String imagesLink, String menu)
     {
         this.name = name;
         this.addressLine1 = addressLine1;
-        this.addressLine2 = addressLine1;
-        this.addressLine3 = addressLine1;
+        this.addressLine2 = addressLine2;
+        this.addressLine3 = addressLine3;
         this.averageCost = averageCost;
-        this.openingHours = openingHours;
-        this.closingHours = closingHours;
         this.phoneNumber = phoneNumber;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -88,6 +82,7 @@ public class  Restaurant {
         this.imagesLink = imagesLink;
         this.menu = menu;
         this.reviews = new ArrayList<>();
+        this.operationHours = new ArrayList<>();
     }
 
     public Long getRestaurantID() {
@@ -136,22 +131,6 @@ public class  Restaurant {
 
     public void setAverageCost(Double averageCost) {
         this.averageCost = averageCost;
-    }
-
-    public String getOpeningHours() {
-        return openingHours;
-    }
-
-    public void setOpeningHours(String openingHours) {
-        this.openingHours = openingHours;
-    }
-
-    public String getClosingHours() {
-        return closingHours;
-    }
-
-    public void setClosingHours(String closingHours) {
-        this.closingHours = closingHours;
     }
 
     public String getPhoneNumber() {
@@ -207,8 +186,7 @@ public class  Restaurant {
         return imagesLink;
     }
 
-    public void setImagesLink()
-    {
+    public void setImagesLink(String imagesLink) {
         this.imagesLink = imagesLink;
     }
 
@@ -230,19 +208,33 @@ public class  Restaurant {
         this.reviews = reviews;
     }
 
+    public List<RestaurantOperationHours> getOperationHours() {
+        return operationHours;
+    }
+
+    public void setOperationHours(List<RestaurantOperationHours> operationHours) {
+        this.operationHours = operationHours;
+    }
 
     /**
-     * This method checks if the restaurant is open or not
+     * This method checks if the restaurant is open.
      *
-     * @param currentTime - current time
-     * @return true, if the current time is within the restaurant's operating time.
-     *         false, if the current time is not within the restaurant's operating time.
+     * @return true if the restaurant is open, else false.
      */
-    public Boolean isOpen(LocalTime currentTime)
+    public Boolean isOpen()
     {
-        LocalTime openingTime = LocalTime.parse(openingHours);
-        LocalTime closingTime = LocalTime.parse(closingHours);
-
-        return !currentTime.isBefore(openingTime) && !currentTime.isAfter(closingTime);
+        LocalTime currentTime = LocalTime.now();
+        int currentDayOfWeek = LocalDateTime.now().getDayOfWeek().getValue(); // get current day of week
+        List<RestaurantOperationHours> operationHours = this.getOperationHours();
+        for (RestaurantOperationHours hours : operationHours)
+        {
+            if (hours.getDayOfWeek() == currentDayOfWeek)
+            { // if the restaurant is open on the current day of week
+                LocalTime openingTime = LocalTime.parse(hours.getOpeningTime());
+                LocalTime closingTime = LocalTime.parse(hours.getClosingTime());
+                return !currentTime.isBefore(openingTime) && !currentTime.isAfter(closingTime); // return whether the current time is between opening and closing time
+            }
+        }
+        return false;
     }
 }

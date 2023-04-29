@@ -31,12 +31,21 @@ public class RestaurantController {
         return new ResponseEntity<RestaurantDTO>(restaurantService.getRestaurantById(restaurantId), HttpStatus.OK);
     }
 
+    /**
+     * This method returns all the open restaurants within 1-mile radius from user's location
+     *
+     * @param userLocation - UserLocation object which contains user's latitude and user's longitude
+     * @return all open restaurants within 1-mile radius from user's location
+     */
     @GetMapping("/restaurants")
-    public ResponseEntity<List<RestaurantDTO>> getAllRestaurants(@RequestBody UserLocation userLocation)
+    public ResponseEntity<List<RestaurantDTO>> getAllRestaurantsWithinAMileRadius(@RequestBody UserLocation userLocation)
     {
-
         return new ResponseEntity<>(restaurantService.getRestaurantsByLocation(userLocation.getLatitude(), userLocation.getLongitude()), HttpStatus.OK );
     }
 
-
+    @GetMapping("/all-restaurants")
+    public ResponseEntity<List<RestaurantDTO>> getAllRestaurants()
+    {
+        return new ResponseEntity<>(restaurantService.getAllRestaurants(), HttpStatus.OK );
+    }
 }

@@ -13,5 +13,7 @@ public interface RestaurantService {
 
     List<RestaurantDTO> getRestaurantsByLocation(Double latitude, Double longitude);
 
+    List<RestaurantDTO> getAllRestaurants();
+
 
 }
