@@ -2,7 +2,7 @@ package com.app.foodfinder.service.implementation;
 
 import com.app.foodfinder.dto.RestaurantDTO;
 import com.app.foodfinder.entity.Restaurant;
-import com.app.foodfinder.exception.ResourceNotFoundException;
+import com.app.foodfinder.exception.custom.ResourceNotFoundException;
 import com.app.foodfinder.dto.dtomapper.RestaurantDTOMapper;
 import com.app.foodfinder.repository.RestaurantRepository;
 import com.app.foodfinder.service.RestaurantService;
@@ -18,20 +18,18 @@ public class RestaurantServiceImplementation implements RestaurantService {
     private final RestaurantRepository restaurantRepository;
     private final RestaurantDTOMapper restaurantDTOMapper;
 
+
     @Autowired
-    public RestaurantServiceImplementation(RestaurantRepository restaurantRepository, RestaurantDTOMapper restaurantDTOMapper)
-    {
+    public RestaurantServiceImplementation(RestaurantRepository restaurantRepository, RestaurantDTOMapper restaurantDTOMapper) {
         this.restaurantRepository = restaurantRepository;
         this.restaurantDTOMapper = restaurantDTOMapper;
     }
 
     @Override
-    public RestaurantDTO getRestaurantById(Long restaurantId)
-    {
+    public RestaurantDTO getRestaurantById(Long restaurantId) {
         Restaurant restaurant = restaurantRepository.findByRestaurantID(restaurantId);
 
-        if(restaurant == null)
-        {
+        if(restaurant == null) {
             throw new ResourceNotFoundException("Restaurant not found");
         }
 
@@ -50,16 +48,13 @@ public class RestaurantServiceImplementation implements RestaurantService {
      * @return list of open restaurants with one-mile radius.
      */
     @Override
-    public List<RestaurantDTO> getRestaurantsByLocation(Double latitude, Double longitude)
-    {
+    public List<RestaurantDTO> getRestaurantsByLocation(Double latitude, Double longitude) {
         final double ONE_MILE_IN_METERS = 1609.34; // 1 mile = 1609.34 meters
 
         List<Restaurant> nearbyRestaurants = new ArrayList<>();
-
         List<Restaurant> allRestaurants =  restaurantRepository.findAll();
 
-        for (Restaurant restaurant : allRestaurants)
-        {
+        for (Restaurant restaurant : allRestaurants) {
             double restaurantLatitude = restaurant.getLatitude();
             double restaurantLongitude = restaurant.getLongitude();
             double distance = restaurant.distanceFromUser(latitude, longitude, restaurantLatitude, restaurantLongitude);
@@ -69,8 +64,7 @@ public class RestaurantServiceImplementation implements RestaurantService {
             double averageCostOfDish = restaurant.averageCostOfADish();
             restaurant.setAverageCost(averageCostOfDish);
 
-            if (distance <= ONE_MILE_IN_METERS && isOpen)
-            {
+            if (distance <= ONE_MILE_IN_METERS && isOpen) {
                 restaurant.setDistanceFromUser(distance);
                 nearbyRestaurants.add(restaurant);
             }
@@ -90,12 +84,10 @@ public class RestaurantServiceImplementation implements RestaurantService {
      * @return list of all restaurants.
      */
     @Override
-    public List<RestaurantDTO> getAllRestaurants()
-    {
+    public List<RestaurantDTO> getAllRestaurants() {
         List<Restaurant> allRestaurants =  restaurantRepository.findAll();
 
-        for(Restaurant restaurant : allRestaurants)
-        {
+        for(Restaurant restaurant : allRestaurants) {
             double averageCost = restaurant.averageCostOfADish();
             restaurant.setAverageCost(averageCost);
         }
