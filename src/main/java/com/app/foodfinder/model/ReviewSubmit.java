@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReviewModel {
+public class ReviewSubmit {
 
     private String comment;
     private Integer rating;

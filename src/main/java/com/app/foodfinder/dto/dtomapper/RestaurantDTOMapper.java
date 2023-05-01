@@ -1,13 +1,12 @@
-package com.app.foodfinder.dtomapper;
+package com.app.foodfinder.dto.dtomapper;
 
 import com.app.foodfinder.dto.RestaurantDTO;
 import com.app.foodfinder.entity.Restaurant;
 import org.springframework.stereotype.Component;
-
 import java.util.function.Function;
 
 @Component
-public class RestaurantDTOMapper implements Function<Restaurant, RestaurantDTO> {
+public final class RestaurantDTOMapper implements Function<Restaurant, RestaurantDTO> {
 
     @Override
     public RestaurantDTO apply(Restaurant restaurant) {
@@ -15,17 +14,16 @@ public class RestaurantDTOMapper implements Function<Restaurant, RestaurantDTO> 
                return new RestaurantDTO (
                                  restaurant.getRestaurantID(),
                                  restaurant.getName(),
-                                 restaurant.getAddressLine1(),
-                                 restaurant.getAddressLine2(),
-                                 restaurant.getAddressLine3(),
-                                 restaurant.getAverageCost(),
+                                 restaurant.getAddress(),
                                  restaurant.getPhoneNumber(),
                                  restaurant.getLatitude(),
                                  restaurant.getLongitude(),
                                  restaurant.getOverallRating(),
                                  restaurant.getCuisine().getName(),
                                  restaurant.getImagesLink(),
+                                 restaurant.getAverageCost(),
                                  restaurant.getDistanceFromUser()
+
                );
 
     }

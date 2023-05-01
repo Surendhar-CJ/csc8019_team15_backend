@@ -1,4 +1,4 @@
-package com.app.foodfinder.service;
+package com.app.foodfinder.service.implementation;
 
 import com.app.foodfinder.dto.UserDTO;
 import com.app.foodfinder.entity.User;
@@ -85,7 +85,7 @@ public class UserServiceImplementation implements UserService
         }
         else
         {
-            throw new RuntimeException("User not found");
+            throw new ResourceNotFoundException("User not found");
         }
    }
 

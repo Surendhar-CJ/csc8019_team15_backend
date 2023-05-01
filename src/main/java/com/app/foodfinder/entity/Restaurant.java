@@ -1,17 +1,19 @@
 package com.app.foodfinder.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
+import lombok.*;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "restaurant")
 public class  Restaurant {
@@ -24,17 +26,8 @@ public class  Restaurant {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "address_line1", nullable = false)
-    private String addressLine1;
-
-    @Column(name = "address_line2")
-    private String addressLine2;
-
-    @Column(name = "address_line3")
-    private String addressLine3;
-
-    @Column(name = "average_cost")
-    private Double averageCost;
+    @Column(name = "address", nullable = false)
+    private String address;
 
     @Column(name = "phone_number")
     public String phoneNumber;
@@ -55,50 +48,49 @@ public class  Restaurant {
     @Column(name = "images_link", nullable = false)
     private String imagesLink;
 
-    @Column(name ="menu")
-    private String menu;
+    @Transient
+    private Double averageCost;
 
     @Transient
     private Double distanceFromUser;
 
+    @Transient
+    private LocalTime openingTime;
+
     @OneToMany(mappedBy = "restaurant")
     private List<Review> reviews;
 
-    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
-    private List<RestaurantOperationHours> operationHours;
+    @ManyToMany
+    @JoinTable(
+            name = "restaurant_operation_hour",
+            joinColumns = @JoinColumn(name = "restaurant_id"),
+            inverseJoinColumns = @JoinColumn(name = "operation_hour_id")
+    )
+    private List<OperationHour> operationHours;
 
-    public Restaurant(String name, String addressLine1, String addressLine2, String addressLine3, Double averageCost, String phoneNumber, Double latitude, Double longitude, Double overallRating, Cuisine cuisine, String imagesLink, String menu)
-    {
-        this.name = name;
-        this.addressLine1 = addressLine1;
-        this.addressLine2 = addressLine2;
-        this.addressLine3 = addressLine3;
-        this.averageCost = averageCost;
-        this.phoneNumber = phoneNumber;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.overallRating = overallRating;
-        this.cuisine = cuisine;
-        this.imagesLink = imagesLink;
-        this.menu = menu;
-        this.reviews = new ArrayList<>();
-        this.operationHours = new ArrayList<>();
-    }
+    @ManyToMany
+    @JoinTable(
+            name = "restaurant_menu",
+            joinColumns = @JoinColumn(name = "restaurant_id"),
+            inverseJoinColumns = @JoinColumn(name = "menu_id")
+    )
+    private List<Menu> menuItems;
+
+
 
     /**
      * This method checks if the restaurant is open.
      *
      * @return true if the restaurant is open, else false.
      */
-    public Boolean isOpen()
-    {
+    public Boolean isOpen() {
         LocalTime currentTime = LocalTime.now();
         int currentDayOfWeek = LocalDateTime.now().getDayOfWeek().getValue(); // get current day of week
-        List<RestaurantOperationHours> operationHours = this.getOperationHours();
-        for (RestaurantOperationHours hours : operationHours)
-        {
-            if (hours.getDayOfWeek() == currentDayOfWeek)
-            { // if the restaurant is open on the current day of week
+
+        List<OperationHour> operationHours = this.getOperationHours();
+
+        for (OperationHour hours : operationHours) {
+            if (DayOfWeek.valueOf(hours.getDayOfWeek().toUpperCase()).getValue() == currentDayOfWeek) { // if the restaurant is open on the current day of week
                 LocalTime openingTime = LocalTime.parse(hours.getOpeningTime());
                 LocalTime closingTime = LocalTime.parse(hours.getClosingTime());
                 return !currentTime.isBefore(openingTime) && !currentTime.isAfter(closingTime); // return whether the current time is between opening and closing time
@@ -106,4 +98,60 @@ public class  Restaurant {
         }
         return false;
     }
+
+
+
+    public Double averageCostOfADish() {
+        List<Menu> menuItems = this.menuItems;
+        System.out.println("Size "+menuItems.size());
+
+        double averageCost = 0;
+
+        if(menuItems.size() == 0)
+            return averageCost;
+
+        for(Menu menu : menuItems){
+            averageCost += menu.getPrice();
+            System.out.println(menu);
+        }
+
+        DecimalFormat df = new DecimalFormat("#.##");
+        df.setRoundingMode(RoundingMode.DOWN);
+
+        return Double.parseDouble(df.format(averageCost/menuItems.size()));
+    }
+
+
+
+    /**
+     * This method calculates and returns the distance between the two points using latitude and longitude.
+     *
+     * @param latitude1 - latitude of the first point
+     * @param longitude1 - longitude of the first point
+     * @param latitude2 - latitude of the second point
+     * @param longitude2 - longitude of the second point
+     * @return distance (in metres)
+     */
+    public Double distanceFromUser(double latitude1, double longitude1, double latitude2, double longitude2)
+    {
+        final int RADIUS_OF_EARTH = 6371; // Earth's radius in km
+
+        double latDistance = Math.toRadians(latitude2 - latitude1);
+        double lonDistance = Math.toRadians(longitude2 - longitude1);
+
+        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                + Math.cos(Math.toRadians(latitude1)) * Math.cos(Math.toRadians(latitude2))
+                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        double distance = RADIUS_OF_EARTH * c * 1000; // convert to meters
+
+        DecimalFormat df = new DecimalFormat("#.#");
+        df.setRoundingMode(RoundingMode.DOWN);
+
+        return Double.parseDouble(df.format(distance));
+    }
+
+
 }
