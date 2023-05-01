@@ -1,4 +1,4 @@
-package com.app.foodfinder.service;
+package com.app.foodfinder.service.implementation;
 
 import com.app.foodfinder.dto.RestaurantDTO;
 import com.app.foodfinder.entity.Restaurant;
@@ -8,9 +8,6 @@ import com.app.foodfinder.repository.RestaurantRepository;
 import com.app.foodfinder.service.RestaurantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;

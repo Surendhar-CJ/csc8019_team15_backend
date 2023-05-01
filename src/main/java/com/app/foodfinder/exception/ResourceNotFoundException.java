@@ -1,9 +1,8 @@
 package com.app.foodfinder.exception;
 
-public class NotFoundException extends RuntimeException {
+public class ResourceNotFoundException extends RuntimeException {
 
-    public NotFoundException(String message)
-    {
+    public ResourceNotFoundException(String message) {
         super(message);
     }
 }

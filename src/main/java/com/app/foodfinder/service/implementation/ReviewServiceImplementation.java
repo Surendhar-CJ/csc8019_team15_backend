@@ -1,4 +1,4 @@
-package com.app.foodfinder.service;
+package com.app.foodfinder.service.implementation;
 
 import com.app.foodfinder.dto.ReviewDTO;
 import com.app.foodfinder.entity.Restaurant;
