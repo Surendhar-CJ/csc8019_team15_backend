@@ -1,4 +1,4 @@
-package com.app.foodfinder.exception;
+package com.app.foodfinder.exception.custom;
 
 public class ResourceNotFoundException extends RuntimeException {
 

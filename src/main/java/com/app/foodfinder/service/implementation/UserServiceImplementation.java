@@ -2,9 +2,9 @@ package com.app.foodfinder.service.implementation;
 
 import com.app.foodfinder.dto.UserDTO;
 import com.app.foodfinder.entity.User;
-import com.app.foodfinder.exception.InvalidPasswordException;
-import com.app.foodfinder.exception.ResourceNotFoundException;
-import com.app.foodfinder.exception.UserExistsException;
+import com.app.foodfinder.exception.ErrorResponse;
+import com.app.foodfinder.exception.custom.InvalidPasswordException;
+import com.app.foodfinder.exception.custom.ResourceNotFoundException;
 import com.app.foodfinder.dto.dtomapper.UserDTOMapper;
 import com.app.foodfinder.repository.UserRepository;
 import com.app.foodfinder.service.UserService;
@@ -22,51 +22,47 @@ public class UserServiceImplementation implements UserService
     private final UserDTOMapper userDTOMapper;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
+
     @Autowired
-    public UserServiceImplementation(UserRepository userRepository, UserDTOMapper userDTOMapper, BCryptPasswordEncoder bCryptPasswordEncoder)
-    {
+    public UserServiceImplementation(UserRepository userRepository, UserDTOMapper userDTOMapper, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.userDTOMapper = userDTOMapper;
     }
 
-    @Override
-    public UserDTO userRegister(User user)
-    {
-        User existingUser1 = userRepository.findByUsername(user.getUsername());
 
-        if(existingUser1 != null)
-        {
-            throw new UserExistsException("Username already taken");
+
+    @Override
+    public UserDTO userRegister(User user) {
+        User existingUser = userRepository.findByUsername(user.getUsername());
+
+        if(existingUser != null) {
+            throw new ErrorResponse.UserExistsException("Username already taken");
         }
 
-        User existingUser2 = userRepository.findByEmail(user.getEmail());
+        existingUser = userRepository.findByEmail(user.getEmail());
 
-        if(existingUser2 != null)
-        {
-            throw new UserExistsException("User with the email address '" + user.getEmail() + "' already exists");
+        if(existingUser != null) {
+            throw new ErrorResponse.UserExistsException("User with the email address '" + user.getEmail() + "' already exists");
         }
 
         String hashedPassword = bCryptPasswordEncoder.encode(user.getPassword());
-
         user.setPassword(hashedPassword);
-
         userRepository.save(user);
 
         return userDTOMapper.apply(user);
     }
 
+
+
     @Override
-    public UserDTO userLogin(String username, String password)
-    {
+    public UserDTO userLogin(String username, String password) {
         User user = userRepository.findByUsername(username);
 
-        if (user == null || !username.matches(user.getUsername()) )
-        {
+        if (user == null || !username.matches(user.getUsername()) ) {
             throw new UsernameNotFoundException("Invalid username");
         }
-        else if(!bCryptPasswordEncoder.matches(password, user.getPassword()))
-        {
+        else if(!bCryptPasswordEncoder.matches(password, user.getPassword())) {
             throw new InvalidPasswordException("Invalid Password");
         }
 
@@ -74,35 +70,33 @@ public class UserServiceImplementation implements UserService
 
     }
 
+
+
     @Override
-    public UserDTO getUserById(Long id)
-    {
+    public UserDTO getUserById(Long id) {
         Optional<User> user = userRepository.findById(id);
 
-        if(user.isPresent())
-        {
+        if(user.isPresent()) {
             return userDTOMapper.apply(user.get());
         }
-        else
-        {
+        else {
             throw new ResourceNotFoundException("User not found");
         }
    }
 
 
+
    @Override
-    public void deleteUserById(Long id)
-   {
+    public void deleteUserById(Long id) {
        Optional<User> user = userRepository.findById(id);
 
-       if(user.isPresent())
-       {
+       if(user.isPresent()) {
            userRepository.deleteById(id);
        }
-       else
-       {
+       else {
            throw new ResourceNotFoundException("User not found");
        }
    }
+
 
 }

@@ -1,6 +1,8 @@
 package com.app.foodfinder.exception;
 
 
+import com.app.foodfinder.exception.custom.InvalidPasswordException;
+import com.app.foodfinder.exception.custom.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -45,8 +47,8 @@ public final class GlobalExceptionHandler {
 
 
 
-    @ExceptionHandler(value = UserExistsException.class)
-    public ResponseEntity<ErrorResponse> handlingUserExistException(UserExistsException userExistsException){
+    @ExceptionHandler(value = ErrorResponse.UserExistsException.class)
+    public ResponseEntity<ErrorResponse> handlingUserExistException(ErrorResponse.UserExistsException userExistsException){
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.CONFLICT.value(), userExistsException.getMessage(), LocalTime.now());
         return new ResponseEntity<ErrorResponse>(errorResponse, HttpStatus.CONFLICT);
     }

@@ -13,4 +13,11 @@ public class ErrorResponse {
     private int httpStatusCode;
     private String message;
     private LocalTime timeStamp;
+
+    public static class UserExistsException extends RuntimeException {
+
+        public UserExistsException(String message) {
+            super(message);
+        }
+    }
 }
