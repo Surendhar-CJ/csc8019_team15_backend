@@ -1,22 +1,19 @@
-package com.app.foodfinder.service;
+package com.app.foodfinder.service.implementation;
 
 import com.app.foodfinder.dto.RestaurantDTO;
 import com.app.foodfinder.entity.Restaurant;
-import com.app.foodfinder.exception.NotFoundException;
-import com.app.foodfinder.mapper.RestaurantDTOMapper;
+import com.app.foodfinder.exception.ResourceNotFoundException;
+import com.app.foodfinder.dto.dtomapper.RestaurantDTOMapper;
 import com.app.foodfinder.repository.RestaurantRepository;
+import com.app.foodfinder.service.RestaurantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class RestaurantServiceImplementation implements RestaurantService{
+public class RestaurantServiceImplementation implements RestaurantService {
 
     private final RestaurantRepository restaurantRepository;
     private final RestaurantDTOMapper restaurantDTOMapper;
@@ -35,8 +32,11 @@ public class RestaurantServiceImplementation implements RestaurantService{
 
         if(restaurant == null)
         {
-            throw new NotFoundException("Restaurant not found");
+            throw new ResourceNotFoundException("Restaurant not found");
         }
+
+        double averageCost = restaurant.averageCostOfADish();
+        restaurant.setAverageCost(averageCost);
 
         return restaurantDTOMapper.apply(restaurant);
     }
@@ -62,9 +62,12 @@ public class RestaurantServiceImplementation implements RestaurantService{
         {
             double restaurantLatitude = restaurant.getLatitude();
             double restaurantLongitude = restaurant.getLongitude();
-            double distance = calculateDistance(latitude, longitude, restaurantLatitude, restaurantLongitude);
+            double distance = restaurant.distanceFromUser(latitude, longitude, restaurantLatitude, restaurantLongitude);
 
             boolean isOpen = restaurant.isOpen();
+
+            double averageCostOfDish = restaurant.averageCostOfADish();
+            restaurant.setAverageCost(averageCostOfDish);
 
             if (distance <= ONE_MILE_IN_METERS && isOpen)
             {
@@ -79,35 +82,7 @@ public class RestaurantServiceImplementation implements RestaurantService{
     }
 
 
-    /**
-     * This method calculates and returns the distance between the two points using latitude and longitude.
-     *
-     * @param latitude1 - latitude of the first point
-     * @param longitude1 - longitude of the first point
-     * @param latitude2 - latitude of the second point
-     * @param longitude2 - longitude of the second point
-     * @return distance (in metres)
-     */
-    private double calculateDistance(double latitude1, double longitude1, double latitude2, double longitude2)
-    {
-        final int RADIUS_OF_EARTH = 6371; // Earth's radius in km
 
-        double latDistance = Math.toRadians(latitude2 - latitude1);
-        double lonDistance = Math.toRadians(longitude2 - longitude1);
-
-        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
-                + Math.cos(Math.toRadians(latitude1)) * Math.cos(Math.toRadians(latitude2))
-                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
-
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-        double distance = RADIUS_OF_EARTH * c * 1000; // convert to meters
-
-        DecimalFormat df = new DecimalFormat("#.#");
-        df.setRoundingMode(RoundingMode.DOWN);
-
-        return Double.parseDouble(df.format(distance));
-    }
 
     /**
      * This method returns a list of all restaurants
@@ -118,6 +93,12 @@ public class RestaurantServiceImplementation implements RestaurantService{
     public List<RestaurantDTO> getAllRestaurants()
     {
         List<Restaurant> allRestaurants =  restaurantRepository.findAll();
+
+        for(Restaurant restaurant : allRestaurants)
+        {
+            double averageCost = restaurant.averageCostOfADish();
+            restaurant.setAverageCost(averageCost);
+        }
 
         return allRestaurants.stream()
                 .map(restaurantDTOMapper)

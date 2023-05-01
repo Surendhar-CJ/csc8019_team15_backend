@@ -1,13 +1,12 @@
-package com.app.foodfinder.mapper;
+package com.app.foodfinder.dto.dtomapper;
 
 import com.app.foodfinder.dto.ReviewDTO;
 import com.app.foodfinder.entity.Review;
 import org.springframework.stereotype.Component;
-
 import java.util.function.Function;
 
 @Component
-public class ReviewDTOMapper implements Function<Review, ReviewDTO> {
+public final class ReviewDTOMapper implements Function<Review, ReviewDTO> {
 
     @Override
     public ReviewDTO apply(Review review) {

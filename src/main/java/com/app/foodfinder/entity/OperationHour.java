@@ -9,14 +9,20 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "cuisine")
-public class Cuisine {
-
+@Table(name = "operation_hour")
+public class OperationHour
+{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name", unique = true, nullable = false)
-    private String name;
+    @Column(name = "day_of_Week", unique = true, nullable = false)
+    private String dayOfWeek;
+
+    @Column(name = "opening_time")
+    private String openingTime;
+
+    @Column(name = "closing_time")
+    private String closingTime;
 }
 

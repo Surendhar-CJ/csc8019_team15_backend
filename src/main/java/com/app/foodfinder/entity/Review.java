@@ -12,7 +12,7 @@ public class Review {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", unique = true, nullable = false)
+    @Column(name = "id")
     private Long reviewId;
 
     @Column(name = "comment")
@@ -22,12 +22,13 @@ public class Review {
     private Integer rating;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "restaurant_id", nullable = false)
+    @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
+
 
     public Review(String comment, Integer rating, User user, Restaurant restaurant)
     {
@@ -36,4 +37,6 @@ public class Review {
         this.user = user;
         this.restaurant = restaurant;
     }
+
+
 }

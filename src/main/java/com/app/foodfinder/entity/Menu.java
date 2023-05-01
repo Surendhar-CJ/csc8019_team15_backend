@@ -9,14 +9,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "cuisine")
-public class Cuisine {
+public class Menu {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name", unique = true, nullable = false)
-    private String name;
-}
+    @Column(name = "item_name", nullable = false)
+    private String itemName;
 
+    @Column(name = "price", nullable = false)
+    private Double price;
+}

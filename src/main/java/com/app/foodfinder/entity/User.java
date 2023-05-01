@@ -23,6 +23,7 @@ public class User {
     @Column(name = "password", nullable = false)
     private String password;
 
+    
     public User(String username, String email, String password)
     {
         this.username = username;

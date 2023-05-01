@@ -18,18 +18,20 @@ public class RestaurantController {
 
     private final RestaurantService restaurantService;
 
+    
     @Autowired
-    public RestaurantController(RestaurantService restaurantService)
-    {
+    public RestaurantController(RestaurantService restaurantService){
         this.restaurantService = restaurantService;
     }
 
 
+
     @GetMapping("/restaurants/{restaurantId}")
-    public ResponseEntity<RestaurantDTO> getRestaurantById(@PathVariable("restaurantId") Long restaurantId)
-    {
+    public ResponseEntity<RestaurantDTO> getRestaurantById(@PathVariable("restaurantId") Long restaurantId) {
         return new ResponseEntity<RestaurantDTO>(restaurantService.getRestaurantById(restaurantId), HttpStatus.OK);
     }
+
+
 
     /**
      * This method returns all the open restaurants within 1-mile radius from user's location
@@ -38,14 +40,15 @@ public class RestaurantController {
      * @return all open restaurants within 1-mile radius from user's location
      */
     @GetMapping("/restaurants")
-    public ResponseEntity<List<RestaurantDTO>> getAllRestaurantsWithinAMileRadius(@RequestBody UserLocation userLocation)
-    {
+    public ResponseEntity<List<RestaurantDTO>> getAllRestaurantsWithinAMileRadius(@RequestBody UserLocation userLocation) {
         return new ResponseEntity<>(restaurantService.getRestaurantsByLocation(userLocation.getLatitude(), userLocation.getLongitude()), HttpStatus.OK );
     }
 
+
+
     @GetMapping("/all-restaurants")
-    public ResponseEntity<List<RestaurantDTO>> getAllRestaurants()
-    {
+    public ResponseEntity<List<RestaurantDTO>> getAllRestaurants() {
         return new ResponseEntity<>(restaurantService.getAllRestaurants(), HttpStatus.OK );
     }
+
 }

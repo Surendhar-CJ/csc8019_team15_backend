@@ -1,4 +1,4 @@
-package com.app.foodfinder.jwt;
+package com.app.foodfinder.config.jwt;
 
 import com.app.foodfinder.config.UserDetailsServiceImplementation;
 import jakarta.servlet.FilterChain;
@@ -12,26 +12,25 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-
 import java.io.IOException;
 
 @Component
 public class JWTFilter extends OncePerRequestFilter {
 
     private final JWTService jwtService;
-
     private final UserDetailsServiceImplementation userDetailsService;
 
+
     @Autowired
-    public JWTFilter(JWTService jwtService, UserDetailsServiceImplementation userDetailsService)
-    {
+    public JWTFilter(JWTService jwtService, UserDetailsServiceImplementation userDetailsService) {
         this.jwtService = jwtService;
         this.userDetailsService = userDetailsService;
     }
 
+
+
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException
-    {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String authorization = request.getHeader("Authorization");
         String token = null;
         String username = null;
@@ -56,4 +55,6 @@ public class JWTFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(request, response);
     }
+
+
 }

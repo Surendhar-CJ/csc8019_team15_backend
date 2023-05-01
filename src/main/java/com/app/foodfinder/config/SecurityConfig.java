@@ -1,6 +1,6 @@
 package com.app.foodfinder.config;
 
-import com.app.foodfinder.jwt.JWTFilter;
+import com.app.foodfinder.config.jwt.JWTFilter;
 import com.app.foodfinder.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -11,7 +11,6 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -23,25 +22,26 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final UserRepository userRepository;
+    private final JWTFilter jwtFilter;
 
+    
     @Autowired
-    private JWTFilter jwtFilter;
-
-    @Autowired
-    public SecurityConfig(UserRepository userRepository)
-    {
+    public SecurityConfig(UserRepository userRepository, JWTFilter jwtFilter){
         this.userRepository = userRepository;
+        this.jwtFilter = jwtFilter;
     }
 
+
+
     @Bean
-    public UserDetailsService userDetailsService()
-    {
+    public UserDetailsService userDetailsService(){
         return new UserDetailsServiceImplementation(userRepository);
     }
 
+
+
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception
-    {
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
         httpSecurity.authorizeHttpRequests()
                                 .requestMatchers(HttpMethod.POST, "/food_finder/restaurants/reviews/**").authenticated()
                                 .requestMatchers(HttpMethod.PUT, "/food_finder/restaurants/reviews/**").authenticated()
@@ -62,18 +62,22 @@ public class SecurityConfig {
         return httpSecurity.build();
     }
 
+
+
     @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder()
-    {
+    public BCryptPasswordEncoder bCryptPasswordEncoder(){
         return new BCryptPasswordEncoder();
     }
 
+
+
     @Bean
-    public AuthenticationProvider authenticationProvider()
-    {
+    public AuthenticationProvider authenticationProvider(){
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
         authenticationProvider.setUserDetailsService(userDetailsService());
         authenticationProvider.setPasswordEncoder(bCryptPasswordEncoder());
         return authenticationProvider;
     }
+
+
 }

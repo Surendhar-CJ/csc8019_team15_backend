@@ -1,15 +1,16 @@
-package com.app.foodfinder.service;
+package com.app.foodfinder.service.implementation;
 
 import com.app.foodfinder.dto.ReviewDTO;
 import com.app.foodfinder.entity.Restaurant;
 import com.app.foodfinder.entity.Review;
 import com.app.foodfinder.entity.User;
-import com.app.foodfinder.exception.NotFoundException;
-import com.app.foodfinder.mapper.ReviewDTOMapper;
-import com.app.foodfinder.model.ReviewModel;
+import com.app.foodfinder.exception.ResourceNotFoundException;
+import com.app.foodfinder.dto.dtomapper.ReviewDTOMapper;
+import com.app.foodfinder.model.ReviewSubmit;
 import com.app.foodfinder.repository.RestaurantRepository;
 import com.app.foodfinder.repository.ReviewRepository;
 import com.app.foodfinder.repository.UserRepository;
+import com.app.foodfinder.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +21,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class ReviewServiceImplementation  implements ReviewService{
+public class ReviewServiceImplementation  implements ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final RestaurantRepository restaurantRepository;
@@ -37,20 +38,20 @@ public class ReviewServiceImplementation  implements ReviewService{
     }
 
     @Override
-    public ReviewDTO createReview(ReviewModel reviewModel)
+    public ReviewDTO createReview(ReviewSubmit reviewSubmit)
     {
-            if (reviewModel == null)
+            if (reviewSubmit == null)
             {
                 throw new IllegalArgumentException("Review cannot be null");
             }
 
-            Restaurant restaurant = restaurantRepository.findById(reviewModel.getRestaurantId())
-                    .orElseThrow(() -> new NotFoundException("Restaurant not found"));
+            Restaurant restaurant = restaurantRepository.findById(reviewSubmit.getRestaurantId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Restaurant not found"));
 
-            User user = userRepository.findById(reviewModel.getUserId())
-                .orElseThrow(() -> new NotFoundException("User not found"));
+            User user = userRepository.findById(reviewSubmit.getUserId())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-            Review review = new Review(reviewModel.getComment(), reviewModel.getRating(), user, restaurant);
+            Review review = new Review(reviewSubmit.getComment(), reviewSubmit.getRating(), user, restaurant);
 
             reviewRepository.save(review);
 
@@ -68,7 +69,7 @@ public class ReviewServiceImplementation  implements ReviewService{
 
         if(restaurant == null)
         {
-            throw new NotFoundException("Restaurant not found");
+            throw new ResourceNotFoundException("Restaurant not found");
         }
 
         List<Review> reviews = restaurant.getReviews();
@@ -79,20 +80,20 @@ public class ReviewServiceImplementation  implements ReviewService{
     }
 
     @Override
-    public ReviewDTO updateReview(Long reviewId, ReviewModel reviewModel)
+    public ReviewDTO updateReview(Long reviewId, ReviewSubmit reviewSubmit)
     {
         Optional<Review> existingReview = reviewRepository.findById(reviewId);
 
         Review updatedReview = existingReview
-                                .orElseThrow(() -> new NotFoundException("Review not found"));
+                                .orElseThrow(() -> new ResourceNotFoundException("Review not found"));
 
-        if(!updatedReview.getUser().getId().equals(reviewModel.getUserId()))
+        if(!updatedReview.getUser().getId().equals(reviewSubmit.getUserId()))
         {
             throw new IllegalArgumentException("User can only update their reviews and not others");
         }
 
-        updatedReview.setComment(reviewModel.getComment());
-        updatedReview.setRating(reviewModel.getRating());
+        updatedReview.setComment(reviewSubmit.getComment());
+        updatedReview.setRating(reviewSubmit.getRating());
 
         reviewRepository.save(updatedReview);
 
@@ -117,7 +118,7 @@ public class ReviewServiceImplementation  implements ReviewService{
         }
         else
         {
-            throw new NotFoundException("Review not found");
+            throw new ResourceNotFoundException("Review not found");
         }
 
         if(!existingReview.getUser().getId().equals(userId))

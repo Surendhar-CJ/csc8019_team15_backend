@@ -1,7 +1,5 @@
 package com.app.foodfinder.dto;
 
-import com.app.foodfinder.entity.User;
-
 public record ReviewDTO (
 
     Long id,
