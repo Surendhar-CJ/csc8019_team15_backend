@@ -1,4 +1,4 @@
-package com.app.foodfinder.mapper;
+package com.app.foodfinder.dtomapper;
 
 import com.app.foodfinder.dto.UserDTO;
 import com.app.foodfinder.entity.User;

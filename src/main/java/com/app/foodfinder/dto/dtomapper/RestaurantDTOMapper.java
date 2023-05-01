@@ -1,4 +1,4 @@
-package com.app.foodfinder.mapper;
+package com.app.foodfinder.dtomapper;
 
 import com.app.foodfinder.dto.RestaurantDTO;
 import com.app.foodfinder.entity.Restaurant;
@@ -25,7 +25,6 @@ public class RestaurantDTOMapper implements Function<Restaurant, RestaurantDTO> 
                                  restaurant.getOverallRating(),
                                  restaurant.getCuisine().getName(),
                                  restaurant.getImagesLink(),
-                                 restaurant.getMenu(),
                                  restaurant.getDistanceFromUser()
                );
 

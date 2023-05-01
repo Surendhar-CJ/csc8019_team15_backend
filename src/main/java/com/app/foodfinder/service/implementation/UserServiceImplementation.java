@@ -3,10 +3,11 @@ package com.app.foodfinder.service;
 import com.app.foodfinder.dto.UserDTO;
 import com.app.foodfinder.entity.User;
 import com.app.foodfinder.exception.InvalidPasswordException;
-import com.app.foodfinder.exception.NotFoundException;
+import com.app.foodfinder.exception.ResourceNotFoundException;
 import com.app.foodfinder.exception.UserExistsException;
-import com.app.foodfinder.mapper.UserDTOMapper;
+import com.app.foodfinder.dto.dtomapper.UserDTOMapper;
 import com.app.foodfinder.repository.UserRepository;
+import com.app.foodfinder.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -100,7 +101,7 @@ public class UserServiceImplementation implements UserService
        }
        else
        {
-           throw new NotFoundException("User not exception");
+           throw new ResourceNotFoundException("User not found");
        }
    }
 

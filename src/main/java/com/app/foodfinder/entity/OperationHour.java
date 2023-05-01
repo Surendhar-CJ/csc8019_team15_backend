@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @Entity
@@ -23,17 +26,16 @@ public class RestaurantOperationHours
     @Column(name = "closing_time")
     private String closingTime;
 
-    @ManyToOne
-    @JoinColumn(name = "restaurant_id")
-    private Restaurant restaurant;
+    @ManyToMany(mappedBy = "operationHours")
+    private List<Restaurant> restaurants;
 
-    public RestaurantOperationHours(Long id, Integer dayOfWeek, String openingTime, String closingTime, Restaurant restaurant)
+    public RestaurantOperationHours(Long id, Integer dayOfWeek, String openingTime, String closingTime)
     {
         this.id = id;
         this.dayOfWeek = dayOfWeek;
         this.openingTime = openingTime;
         this.closingTime = closingTime;
-        this.restaurant = restaurant;
+        this.restaurants = new ArrayList<>();
     }
 
 }
