@@ -14,16 +14,36 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+
+/**
+ * This class provides methods to generate and validate JWT tokens.
+ *
+ * @author CSC8019_Team 15
+ * @since 2023-05-01
+ */
 @Component
 public class JWTService {
 
+    /**
+     * The validity period of the JWT token (in seconds).
+     */
     public static final long JWTTokenValidity = 30 * 60;
 
+
+    /**
+     * The secret key used to sign the JWT token.
+     */
     @Value("${jwt.secret}")
     private String secretKey;
 
 
 
+    /**
+     * Returns the username from the JWT token.
+     *
+     * @param token The JWT token.
+     * @return The username.
+     */
     public String getUsernameFromToken(String token)
     {
         return getClaimFromToken(token, Claims::getSubject);
@@ -31,6 +51,12 @@ public class JWTService {
 
 
 
+    /**
+     * Returns the expiration date of the JWT token.
+     *
+     * @param token The JWT token.
+     * @return The expiration date.
+     */
     public Date getExpirationDateFromToken(String token)
     {
         return getClaimFromToken(token, Claims::getExpiration);
@@ -38,6 +64,14 @@ public class JWTService {
 
 
 
+    /**
+     * Returns a claim from the JWT token.
+     *
+     * @param token         The JWT token.
+     * @param claimsResolver The function to apply to the claims.
+     * @param <T>           The type of the claim.
+     * @return The claim.
+     */
     public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = getAllClaimsFromToken(token);
         return claimsResolver.apply(claims);
@@ -45,6 +79,12 @@ public class JWTService {
 
 
 
+    /**
+     * Returns all the claims from the JWT token.
+     *
+     * @param token The JWT token.
+     * @return The claims.
+     */
     private Claims getAllClaimsFromToken(String token) {
         return Jwts
                 .parserBuilder()
@@ -56,11 +96,26 @@ public class JWTService {
 
 
 
+    /**
+     * Returns whether the JWT token is expired.
+     *
+     * @param token The JWT token.
+     * @return Whether the JWT token is expired.
+     */
     private Boolean isTokenExpired(String token)
     {
         return getExpirationDateFromToken(token).before(new Date());
     }
 
+
+
+    /**
+     * Validates the JWT token.
+     *
+     * @param token The JWT token.
+     * @param userDetails The user details.
+     * @return Whether the JWT token is valid.
+     */
     public Boolean validateToken(String token, UserDetails userDetails) {
         final String username = getUsernameFromToken(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
@@ -68,6 +123,12 @@ public class JWTService {
 
 
 
+    /**
+     * Generates a new JWT token for the given username.
+     *
+     * @param username The username.
+     * @return The JWT token.
+     */
     public String generateToken(String username) {
         Map<String, Object> claims = new HashMap<>();
         return createToken(claims, username);
@@ -75,6 +136,11 @@ public class JWTService {
 
 
 
+    /**
+     * Returns the signing key used to sign the JWT token.
+     *
+     * @return The signing key.
+     */
     private Key getSignKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
@@ -82,6 +148,13 @@ public class JWTService {
 
 
 
+    /**
+     * Creates a new JWT token for the given claims and username.
+     *
+     * @param claims   The claims.
+     * @param username The username.
+     * @return The JWT token.
+     */
     private String createToken(Map<String, Object> claims, String username) {
             return Jwts.builder()
                     .setClaims(claims)

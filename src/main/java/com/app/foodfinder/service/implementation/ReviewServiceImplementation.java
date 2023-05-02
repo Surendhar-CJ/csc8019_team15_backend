@@ -13,13 +13,20 @@ import com.app.foodfinder.repository.UserRepository;
 import com.app.foodfinder.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+
+
+/**
+ * This class implements the ReviewService interface that provides methods to create, read, update, and delete restaurant reviews.
+ *
+ * @author CSC8019_Team 15
+ * @since 2023-05-01
+ */
 @Service
 public class ReviewServiceImplementation  implements ReviewService {
 
@@ -29,6 +36,16 @@ public class ReviewServiceImplementation  implements ReviewService {
     private final ReviewDTOMapper reviewDTOMapper;
 
 
+
+    /**
+     * Constructor for ReviewServiceImplementation that initializes the ReviewRepository, RestaurantRepository, UserRepository,
+     * ReviewDTOMapper objects using dependency injection.
+     *
+     * @param reviewRepository - repository for Review entity
+     * @param restaurantRepository - repository for Restaurant entity
+     * @param userRepository - repository for User entity
+     * @param reviewDTOMapper - mapper for converting Review entities to DTOs
+     */
     @Autowired
     public ReviewServiceImplementation(ReviewRepository reviewRepository, RestaurantRepository restaurantRepository, UserRepository userRepository, ReviewDTOMapper reviewDTOMapper) {
         this.reviewRepository = reviewRepository;
@@ -39,10 +56,21 @@ public class ReviewServiceImplementation  implements ReviewService {
 
 
 
+    /**
+     * This method creates a review based on the ReviewSubmit object
+     * and stores it in the database and maps the created review to a ReviewDTO and returns it.
+     *
+     * @param reviewSubmit - review submission DTO containing the review details
+     *
+     * @return ReviewDTO representing the created review.
+     *
+     * @throws NullPointerException if reviewSubmit is null
+     * @throws ResourceNotFoundException if the restaurant or user associated with the review do not exist
+     */
     @Override
     public ReviewDTO createReview(ReviewSubmit reviewSubmit) {
             if (reviewSubmit == null) {
-                throw new IllegalArgumentException("Review cannot be null");
+                throw new NullPointerException("Review cannot be null");
             }
 
             Restaurant restaurant = restaurantRepository.findById(reviewSubmit.getRestaurantId())
@@ -63,6 +91,17 @@ public class ReviewServiceImplementation  implements ReviewService {
 
 
 
+    /**
+     * This method retrieves a list of Review objects from the database based on the restaurantID passed
+     * and maps it to the list of ReviewDTO.
+     *
+     * @param restaurantId - the ID of the restaurant to retrieve reviews for
+     *
+     * @return List of ReviewDTOs representing the reviews for the restaurant,
+     *          or an empty list if no review is present for the restaurant.
+     *
+     * @throws ResourceNotFoundException if the restaurant does not exist
+     */
     @Override
     public List<ReviewDTO> getAllReviews(Long restaurantId) {
         Restaurant restaurant = restaurantRepository.findByRestaurantID(restaurantId);
@@ -80,6 +119,18 @@ public class ReviewServiceImplementation  implements ReviewService {
 
 
 
+    /**
+     * This method updates the existing review in the database based on the ReviewSubmit object passed
+     * and maps the updated review to the ReviewDTO and returns it.
+     *
+     * @param reviewId - ID of the review to update
+     * @param reviewSubmit - review submission DTO containing the updated review details
+     *
+     * @return ReviewDTO representing the updated review
+     *
+     * @throws ResourceNotFoundException if the review or user associated with the review do not exist
+     * @throws IllegalArgumentException if the user trying to update the review is not the same as the user who created the review
+     */
     @Override
     public ReviewDTO updateReview(Long reviewId, ReviewSubmit reviewSubmit) {
         Optional<Review> existingReview = reviewRepository.findById(reviewId);
@@ -105,6 +156,15 @@ public class ReviewServiceImplementation  implements ReviewService {
 
 
 
+    /**
+     * This method deletes the existing review in the database based on the reviewID and userID (the user who deletes it).
+     *
+     * @param reviewId - ID of the review to delete
+     * @param userId - ID of the user trying to delete the review
+     *
+     * @throws ResourceNotFoundException if the review or user associated with the review do not exist
+     * @throws IllegalArgumentException if the user trying to delete the review is not the same as the user who created the review
+     */
     @Override
     public void deleteReview(Long reviewId, Long userId) {
         Optional<Review> review = reviewRepository.findById(reviewId);
@@ -129,7 +189,8 @@ public class ReviewServiceImplementation  implements ReviewService {
     /**
      * This method returns the updated overall rating of the restaurant
      *
-     * @param restaurant - restaurant
+     * @param restaurant restaurant which is being reviewed.
+     *
      * @return updated overall rating
      */
     private Double updateOverallRating(Restaurant restaurant) {
@@ -157,7 +218,7 @@ public class ReviewServiceImplementation  implements ReviewService {
     /**
      * This method sets the updated overall rating of the restaurant
      *
-     * @param restaurant
+     * @param restaurant restaurant which is being reviewed for
      */
     private void setOverallRating(Restaurant restaurant) {
         restaurant.setOverallRating(updateOverallRating(restaurant));

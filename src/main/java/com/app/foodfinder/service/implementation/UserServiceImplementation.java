@@ -2,19 +2,26 @@ package com.app.foodfinder.service.implementation;
 
 import com.app.foodfinder.dto.UserDTO;
 import com.app.foodfinder.entity.User;
-import com.app.foodfinder.exception.ErrorResponse;
 import com.app.foodfinder.exception.custom.InvalidPasswordException;
 import com.app.foodfinder.exception.custom.ResourceNotFoundException;
 import com.app.foodfinder.dto.dtomapper.UserDTOMapper;
+import com.app.foodfinder.exception.custom.UserExistsException;
 import com.app.foodfinder.repository.UserRepository;
 import com.app.foodfinder.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.util.Optional;
 
+
+
+/**
+ * This class implements the UserService interface to interact with UserRepository.
+ *
+ * @author CSC8019_Team 15
+ * @since 2023-05-01
+ */
 @Service
 public class UserServiceImplementation implements UserService
 {
@@ -23,6 +30,13 @@ public class UserServiceImplementation implements UserService
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
 
+    /**
+     * Constructor for UserServiceImplementation class with the specified dependencies.
+     *
+     * @param userRepository repository for User entity
+     * @param userDTOMapper UserDTOMapper class that maps User entities to UserDTO data transfer objects
+     * @param bCryptPasswordEncoder BCryptPasswordEncoder class that performs password hashing.
+     */
     @Autowired
     public UserServiceImplementation(UserRepository userRepository, UserDTOMapper userDTOMapper, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
@@ -32,18 +46,27 @@ public class UserServiceImplementation implements UserService
 
 
 
+    /**
+     * This method registers a new user with the provided information and returns a UserDTO containing the saved user's data.
+     *
+     * @param user the User entity to register
+     *
+     * @return a UserDTO containing the saved user's data
+     *
+     * @throws UserExistsException if a user with the same username or email already exists in the repository
+     */
     @Override
     public UserDTO userRegister(User user) {
         User existingUser = userRepository.findByUsername(user.getUsername());
 
         if(existingUser != null) {
-            throw new ErrorResponse.UserExistsException("Username already taken");
+            throw new UserExistsException("Username already taken");
         }
 
         existingUser = userRepository.findByEmail(user.getEmail());
 
         if(existingUser != null) {
-            throw new ErrorResponse.UserExistsException("User with the email address '" + user.getEmail() + "' already exists");
+            throw new UserExistsException("User with the email address '" + user.getEmail() + "' already exists");
         }
 
         String hashedPassword = bCryptPasswordEncoder.encode(user.getPassword());
@@ -55,6 +78,17 @@ public class UserServiceImplementation implements UserService
 
 
 
+    /**
+     * This method authenticates a user with the provided username and password and returns a UserDTO containing the user's data.
+     *
+     * @param username the username of the user to authenticate
+     * @param password the password of the user to authenticate
+     *
+     * @return a UserDTO containing the authenticated user's data
+     *
+     * @throws UsernameNotFoundException if the provided username does not exist in the repository
+     * @throws InvalidPasswordException if the provided password does not match the user's password
+     */
     @Override
     public UserDTO userLogin(String username, String password) {
         User user = userRepository.findByUsername(username);
@@ -72,6 +106,15 @@ public class UserServiceImplementation implements UserService
 
 
 
+    /**
+     * This method retrieves a user with the specified ID and returns a UserDTO containing the user's data.
+     *
+     * @param id the ID of the user to retrieve
+     *
+     * @return a UserDTO containing the retrieved user's data
+     *
+     * @throws ResourceNotFoundException if no user with the specified ID exists in the repository
+     */
     @Override
     public UserDTO getUserById(Long id) {
         Optional<User> user = userRepository.findById(id);
@@ -86,7 +129,14 @@ public class UserServiceImplementation implements UserService
 
 
 
-   @Override
+    /**
+     * This method deletes a user with the ID specified.
+     *
+     * @param id the ID of the user to delete.
+     *
+     * @throws ResourceNotFoundException if no user with the specified ID exists in the repository.
+     */
+    @Override
     public void deleteUserById(Long id) {
        Optional<User> user = userRepository.findById(id);
 
