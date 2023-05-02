@@ -7,10 +7,21 @@ import java.text.DecimalFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Comparator;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+
+
+/**
+ * This class represents a Restaurant entity.
+ * It uses Lombok annotations to generate getters, setters, constructors, equals/hashcode and toString methods at compile-time.
+ *
+ * NOTE: Here, Spring Data JPA/Hibernate is used only to fetch results from the database(so table mapping is required) and not creating a schema.
+ *       This has been disabled in application.properties file.
+ *
+ * @author CSC8019_Team 15
+ * @since 2023-05-01
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -48,6 +59,12 @@ public class  Restaurant {
     @Column(name = "images_link", nullable = false)
     private String imagesLink;
 
+    @Column(name = "menu_link")
+    private String menuLink;
+
+    /**
+     * "@Transient" represents that it not part of the database table column of restaurant entity.
+     */
     @Transient
     private Double averageCost;
 
@@ -55,7 +72,7 @@ public class  Restaurant {
     private Double distanceFromUser;
 
     @Transient
-    private LocalTime openingTime;
+    private String operatingHoursOfTheDay;
 
     @OneToMany(mappedBy = "restaurant")
     private List<Review> reviews;
@@ -93,6 +110,7 @@ public class  Restaurant {
             if (DayOfWeek.valueOf(hours.getDayOfWeek().toUpperCase()).getValue() == currentDayOfWeek) { // if the restaurant is open on the current day of week
                 LocalTime openingTime = LocalTime.parse(hours.getOpeningTime());
                 LocalTime closingTime = LocalTime.parse(hours.getClosingTime());
+
                 return !currentTime.isBefore(openingTime) && !currentTime.isAfter(closingTime); // return whether the current time is between opening and closing time
             }
         }
@@ -101,12 +119,18 @@ public class  Restaurant {
 
 
 
+    /**
+     * Calculates the average cost of a main course dish in the menu items of a restaurant.
+     *
+     * @return The average cost of a main course dish.
+     */
     public Double averageCostOfADish() {
         List<Menu> menuItems = this.menuItems;
         System.out.println("Size "+menuItems.size());
 
         double averageCost = 0;
 
+        //Returns 0 if the there is no items to avoid division by zero error
         if(menuItems.size() == 0)
             return averageCost;
 
@@ -124,13 +148,14 @@ public class  Restaurant {
 
 
     /**
-     * This method calculates and returns the distance between the two points using latitude and longitude.
+     * This method calculates and returns the distance between the two points using latitudes and longitudes.
      *
      * @param latitude1 - latitude of the first point
      * @param longitude1 - longitude of the first point
      * @param latitude2 - latitude of the second point
      * @param longitude2 - longitude of the second point
-     * @return distance (in metres)
+     *
+     * @return distance (in metres) with one value after decimal
      */
     public Double distanceFromUser(double latitude1, double longitude1, double latitude2, double longitude2)
     {
@@ -154,4 +179,28 @@ public class  Restaurant {
     }
 
 
+
+    /**
+     * This method returns the operating hours of the restaurant for the current day of the week.
+     *
+     * @return String representing the operating hours of the day in "HH:MM (opening time) - HH:MM (closing time)" format.
+     *         Empty string if there is no operation hours available for the restaurant.
+     *
+     */
+    public String operatingHoursOfTheDay() {
+        LocalTime currentTime = LocalTime.now();
+        int currentDayOfWeek = LocalDateTime.now().getDayOfWeek().getValue();
+
+        List<OperationHour> operationHours = this.getOperationHours();
+
+        for (OperationHour hours : operationHours) {
+            if (DayOfWeek.valueOf(hours.getDayOfWeek().toUpperCase()).getValue() == currentDayOfWeek) {
+                LocalTime openingTime = LocalTime.parse(hours.getOpeningTime());
+                LocalTime closingTime = LocalTime.parse(hours.getClosingTime());
+
+                return String.format("%s - %s", openingTime.format(DateTimeFormatter.ofPattern("HH:mm")), closingTime.format(DateTimeFormatter.ofPattern("HH:mm")));
+            }
+        }
+        return "";
+    }
 }
