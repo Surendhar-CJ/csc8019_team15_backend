@@ -2,7 +2,13 @@ package com.app.foodfinder.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.math.RoundingMode;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.DecimalFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
@@ -16,7 +22,7 @@ import java.util.List;
  * This class represents a Restaurant entity.
  * It uses Lombok annotations to generate getters, setters, constructors, equals/hashcode and toString methods at compile-time.
  *
- * NOTE: Here, Spring Data JPA/Hibernate is used only to fetch results from the database(so table mapping is required) and not creating a schema.
+ * NOTE: Here, Spring Data JPA/Hibernate is used ONLY to fetch results from the database(so table mapping is required) and not creating a schema.
  *       This has been disabled in application.properties file.
  *
  * @author CSC8019_Team 15
@@ -62,8 +68,11 @@ public class  Restaurant {
     @Column(name = "menu_link")
     private String menuLink;
 
+    @Column(name = "website_link")
+    private String websiteLink;
+
     /**
-     * "@Transient" represents that it not part of the database table column of restaurant entity.
+     * "@Transient" represents that it not part of the database table column of the restaurant entity.
      */
     @Transient
     private Double averageCost;
@@ -73,6 +82,9 @@ public class  Restaurant {
 
     @Transient
     private String operatingHoursOfTheDay;
+
+    @Transient
+    private Double approximateWalkingTimeFromUser;
 
     @OneToMany(mappedBy = "restaurant")
     private List<Review> reviews;
@@ -92,6 +104,8 @@ public class  Restaurant {
             inverseJoinColumns = @JoinColumn(name = "menu_id")
     )
     private List<Menu> menuItems;
+
+
 
 
 
@@ -201,6 +215,11 @@ public class  Restaurant {
                 return String.format("%s - %s", openingTime.format(DateTimeFormatter.ofPattern("HH:mm")), closingTime.format(DateTimeFormatter.ofPattern("HH:mm")));
             }
         }
+
+        //Returns an empty String if the restaurant doesn't have operating hours information
         return "";
     }
+
+
+
 }
