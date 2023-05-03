@@ -16,9 +16,23 @@ public interface RestaurantService {
      * Retrieves a restaurant with the specified ID and returns a RestaurantDTO containing the restaurant's data.
      *
      * @param restaurantId the ID of the restaurant to retrieve
+     *
      * @return a RestaurantDTO containing the retrieved restaurant's data
      */
     RestaurantDTO getRestaurantById(Long restaurantId);
+
+
+
+
+    /**
+     * Retrieves a restaurant with the specified ID and User Location and returns a RestaurantDTO containing the restaurant's data.
+     *
+     * @param restaurantId the ID of the restaurant to retrieve
+     *
+     * @return a RestaurantDTO containing the retrieved restaurant's data
+     */
+    RestaurantDTO getRestaurantByIdWithUserLocation(Long restaurantId, Double latitude, Double longitude);
+
 
 
 

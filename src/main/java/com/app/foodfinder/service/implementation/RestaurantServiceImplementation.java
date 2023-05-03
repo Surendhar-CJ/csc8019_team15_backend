@@ -38,9 +38,15 @@ public class RestaurantServiceImplementation implements RestaurantService {
     private final RestaurantRepository restaurantRepository;
     private final RestaurantDTOMapper restaurantDTOMapper;
 
+    /**
+     * Represents the Google Maps API key to fetch the approximate walking time
+     */
     @Value("${api.key}")
     private String apiKey;
 
+    /**
+     * Represents the Google Maps API URL key to fetch the approximate walking time
+     */
     @Value("${google.maps.api.url}")
     private String googleMapsURL;
 
@@ -81,6 +87,43 @@ public class RestaurantServiceImplementation implements RestaurantService {
 
         restaurant.setAverageCost(restaurant.averageCostOfADish());
         restaurant.setOperatingHoursOfTheDay(restaurant.operatingHoursOfTheDay());
+
+        return restaurantDTOMapper.apply(restaurant);
+    }
+
+
+
+
+    /**
+     * This method retrieves a single Restaurant object based on the restaurant ID provided
+     * and maps it to RestaurantDTO.
+     *
+     * @param restaurantId - the ID of the restaurant to retrieved
+     *
+     * @return a RestaurantDTO object representing the restaurant with the provided ID
+     *
+     * @throws ResourceNotFoundException if no restaurant is found with the provided ID
+     */
+    @Override
+    public RestaurantDTO getRestaurantByIdWithUserLocation(Long restaurantId, Double latitude, Double longitude) {
+        Restaurant restaurant = restaurantRepository.findByRestaurantID(restaurantId);
+
+        if(restaurant == null) {
+            throw new ResourceNotFoundException("Restaurant not found");
+        }
+
+        double restaurantLatitude = restaurant.getLatitude();
+        double restaurantLongitude = restaurant.getLongitude();
+        double distance = restaurant.distanceFromUser(latitude, longitude, restaurantLatitude, restaurantLongitude);
+
+        //Sets the distance from the user
+        restaurant.setDistanceFromUser(distance);
+        //Sets average cost of a main course dish
+        restaurant.setAverageCost(restaurant.averageCostOfADish());
+        //Sets operating hours of the day
+        restaurant.setOperatingHoursOfTheDay(restaurant.operatingHoursOfTheDay());
+        //Sets the approximate walking time from the user
+        restaurant.setApproximateWalkingTimeFromUser(walkingTimeFromUser(latitude, longitude, restaurantLatitude, restaurantLongitude));
 
         return restaurantDTOMapper.apply(restaurant);
     }
@@ -154,6 +197,7 @@ public class RestaurantServiceImplementation implements RestaurantService {
                 .map(restaurantDTOMapper)
                 .collect(Collectors.toList());
     }
+
 
 
     /**
