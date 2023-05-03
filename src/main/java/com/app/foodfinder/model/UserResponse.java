@@ -20,6 +20,6 @@ import lombok.Getter;
 @AllArgsConstructor
 public final class UserResponse {
 
-    private final UserDTO userObj;
+    private final UserDTO user;
     private final String token;
 }

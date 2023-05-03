@@ -57,6 +57,24 @@ public class RestaurantController {
 
 
 
+
+    /**
+     * Handles HTTP GET requests to "/food_finder/restaurants/{restaurantId}" and requires UserLocation object.
+     *
+     * @param restaurantId the ID of the restaurant to be retrieved.
+     *
+     * @return a ResponseEntity with a {@link RestaurantDTO} object and an HTTP status code of 200 OK.
+     *
+     * @throws ResourceNotFoundException if a restaurant with passed restaurantId is not found with status code 404.
+     */
+    @PostMapping("/restaurants/{restaurantId}")
+    public ResponseEntity<RestaurantDTO> getRestaurantByIdWithUserLocation(@PathVariable("restaurantId") Long restaurantId, @RequestBody UserLocation userLocation) throws ResourceNotFoundException {
+        return new ResponseEntity<RestaurantDTO>(restaurantService.getRestaurantByIdWithUserLocation(restaurantId, userLocation.getLatitude(), userLocation.getLongitude()), HttpStatus.OK);
+    }
+
+
+
+
     /**
      * Handles HTTP POST requests to "/food_finder/restaurants".
      *
@@ -70,7 +88,7 @@ public class RestaurantController {
      */
     @PostMapping("/restaurants")
     public ResponseEntity<List<RestaurantDTO>> getAllRestaurantsWithinAMileRadius(@RequestBody UserLocation userLocation) {
-        return new ResponseEntity<>(restaurantService.getRestaurantsByLocation(userLocation.getLat(), userLocation.getLng()), HttpStatus.OK);
+        return new ResponseEntity<>(restaurantService.getRestaurantsByLocation(userLocation.getLatitude(), userLocation.getLongitude()), HttpStatus.OK);
     }
 
 
