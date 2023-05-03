@@ -15,6 +15,6 @@ import lombok.Data;
 @AllArgsConstructor
 public class UserLocation {
 
-    private Double latitude;
-    private Double longitude;
+    private Double lat;
+    private Double lng;
 }

@@ -36,8 +36,10 @@ public record RestaurantDTO (
     String operatingHoursOfTheDay,
     String imagesLink,
     String menuLink,
+    String websiteLink,
     Double averageCostOfADish,
-    Double distanceFromUser
+    Double distanceFromUser,
+    Double approximateWalkingTimeFromUser
 
 )
 {}

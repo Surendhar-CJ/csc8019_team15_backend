@@ -18,8 +18,8 @@ import lombok.Getter;
 @Data
 @Getter
 @AllArgsConstructor
-public class UserResponse {
+public final class UserResponse {
 
-    private final UserDTO userDTO;
+    private final UserDTO userObj;
     private final String token;
 }

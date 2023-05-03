@@ -70,7 +70,7 @@ public class RestaurantController {
      */
     @PostMapping("/restaurants")
     public ResponseEntity<List<RestaurantDTO>> getAllRestaurantsWithinAMileRadius(@RequestBody UserLocation userLocation) {
-        return new ResponseEntity<>(restaurantService.getRestaurantsByLocation(userLocation.getLatitude(), userLocation.getLongitude()), HttpStatus.OK);
+        return new ResponseEntity<>(restaurantService.getRestaurantsByLocation(userLocation.getLat(), userLocation.getLng()), HttpStatus.OK);
     }
 
 
