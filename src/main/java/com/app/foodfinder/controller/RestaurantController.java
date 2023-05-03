@@ -59,7 +59,7 @@ public class RestaurantController {
 
 
     /**
-     * Handles HTTP GET requests to "/food_finder/restaurants/{restaurantId}" and requires UserLocation object.
+     * Handles HTTP POST requests to "/food_finder/restaurants/{restaurantId}" and requires UserLocation object.
      *
      * @param restaurantId the ID of the restaurant to be retrieved.
      *
