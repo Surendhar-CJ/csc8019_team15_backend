@@ -177,29 +177,6 @@ public class RestaurantServiceImplementation implements RestaurantService {
 
 
 
-
-    /**
-     * This method retrieves a list of Restaurant objects representing all the restaurants and
-     * maps it to the list of RestaurantDTO objects.
-     *
-     * @return list of RestaurantDTO objects representing all the restaurants.
-     */
-    @Override
-    public List<RestaurantDTO> getAllRestaurants() {
-        List<Restaurant> allRestaurants =  restaurantRepository.findAll();
-
-        for(Restaurant restaurant : allRestaurants) {
-            restaurant.setAverageCost(restaurant.averageCostOfADish());
-            restaurant.setOperatingHoursOfTheDay(restaurant.operatingHoursOfTheDay());
-        }
-
-        return allRestaurants.stream()
-                .map(restaurantDTOMapper)
-                .collect(Collectors.toList());
-    }
-
-
-
     /**
      * This method returns the approximate walking time between the two locations by making an external
      * API call to Google Directions API.

@@ -49,17 +49,14 @@ public class UserController {
      *
      * @param user the User object containing user information to register
      *
-     * @return a ResponseEntity with a JWT token string and an HTTP status code of 201 CREATED.
+     * @return a ResponseEntity with an HTTP status code of 201 CREATED.
      *
      * @throws UserExistsException if the username or email address is already in use with a status code of 409 CONFLICT.
      */
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody User user) throws UserExistsException {
+    public ResponseEntity<Void> register(@RequestBody User user) throws UserExistsException {
         userService.userRegister(user);
-
-        final String jwtToken = jwtService.generateToken(user.getUsername());
-
-        return new ResponseEntity<String>(jwtToken, HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
 
@@ -89,7 +86,7 @@ public class UserController {
 
 
     /**
-     *Handles HTTP GET requests to "/food_finder/users/{id}".
+     * Handles HTTP GET requests to "/food_finder/users/{id}".
      *
      * @param id the ID of the user to retrieve.
      *
@@ -105,20 +102,5 @@ public class UserController {
     }
 
 
-
-    /**
-     * Handles HTTP DELETE requests to "/food_finder/users/{id}".
-     *
-     * @param id the ID of the user to delete.
-     *
-     * @return a ResponseEntity with a success message and an HTTP status code of 200 OK.
-     *
-     * @throws ResourceNotFoundException if the user ID is not found with a status code 404 NOT FOUND.
-     */
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteUserById(@PathVariable("id") Long id) throws ResourceNotFoundException {
-        userService.deleteUserById(id);
-        return new ResponseEntity<>("User deleted successfully", HttpStatus.OK);
-    }
 
 }

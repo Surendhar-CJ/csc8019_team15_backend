@@ -26,11 +26,11 @@ public class Review {
     @Column(name = "id")
     private Long id;
 
+    @Column(name = "rating")
+    private Double rating;
+
     @Column(name = "comment")
     private String comment;
-
-    @Column(name = "rating")
-    private Integer rating;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -51,10 +51,10 @@ public class Review {
      * @param user User object of the user who submitted the review
      * @param restaurant Restaurant object of the restaurant that is being review for
      */
-    public Review(String comment, Integer rating, User user, Restaurant restaurant)
+    public Review(Double rating, String comment, User user, Restaurant restaurant)
     {
-        this.comment = comment;
         this.rating = rating;
+        this.comment = comment;
         this.user = user;
         this.restaurant = restaurant;
     }

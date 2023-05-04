@@ -85,7 +85,7 @@ public class JWTService {
      * @param token The JWT token.
      * @return The claims.
      */
-    private Claims getAllClaimsFromToken(String token) {
+    public Claims getAllClaimsFromToken(String token) {
         return Jwts
                 .parserBuilder()
                 .setSigningKey(getSignKey())
@@ -102,7 +102,7 @@ public class JWTService {
      * @param token The JWT token.
      * @return Whether the JWT token is expired.
      */
-    private Boolean isTokenExpired(String token)
+    public Boolean isTokenExpired(String token)
     {
         return getExpirationDateFromToken(token).before(new Date());
     }
@@ -141,7 +141,7 @@ public class JWTService {
      *
      * @return The signing key.
      */
-    private Key getSignKey() {
+    public Key getSignKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
@@ -163,6 +163,8 @@ public class JWTService {
                     .setExpiration(new Date(System.currentTimeMillis()+ JWTTokenValidity * 1000))
                     .signWith(getSignKey(), SignatureAlgorithm.HS256).compact();
     }
+
+
 
 
 }

@@ -1,10 +1,7 @@
 package com.app.foodfinder.exception;
 
 
-import com.app.foodfinder.exception.custom.InvalidInputException;
-import com.app.foodfinder.exception.custom.InvalidPasswordException;
-import com.app.foodfinder.exception.custom.ResourceNotFoundException;
-import com.app.foodfinder.exception.custom.UserExistsException;
+import com.app.foodfinder.exception.custom.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -108,5 +105,22 @@ public final class GlobalExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), invalidInputException.getMessage(), LocalTime.now());
         return new ResponseEntity<ErrorResponse>(errorResponse, HttpStatus.BAD_REQUEST);
     }
-    
+
+
+
+    /**
+     * Handles the {@link InvalidTokenException} thrown.
+     *
+     * @param invalidTokenException The {@link InvalidTokenException} to handle.
+     *
+     * @return A ResponseEntity containing the error response and HTTP status code.
+     */
+    @ExceptionHandler(value = InvalidTokenException.class)
+    public ResponseEntity<ErrorResponse> handlingInvalidInputException(InvalidTokenException invalidTokenException){
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), invalidTokenException.getMessage(), LocalTime.now());
+        return new ResponseEntity<ErrorResponse>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+
+
 }

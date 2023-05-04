@@ -21,8 +21,8 @@ public record ReviewDTO (
 
     Long id,
     String username,
+    Double rating,
     String comment,
-    Integer rating,
     Long restaurantId,
     Long userId
 

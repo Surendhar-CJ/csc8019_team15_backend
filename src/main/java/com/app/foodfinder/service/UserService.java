@@ -13,12 +13,11 @@ public interface UserService {
 
 
     /**
-     * Registers a new user with the provided user data, and returns a UserDTO containing the newly created user's data.
+     * Registers a new user with the provided user data.
      *
      * @param user the data for the user to register
-     * @return a UserDTO containing the newly created user's data
      */
-    UserDTO userRegister(User user);
+    void userRegister(User user);
 
 
 
@@ -45,10 +44,4 @@ public interface UserService {
 
 
 
-    /**
-     * Deletes a user with the specified ID from the repository.
-     *
-     * @param id the ID of the user to delete
-     */
-    void deleteUserById(Long id);
 }

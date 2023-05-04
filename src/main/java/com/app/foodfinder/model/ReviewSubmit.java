@@ -17,9 +17,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ReviewSubmit {
 
+    private String token;
+    private Double rating;
     private String comment;
-    private Integer rating;
-    private Long userId;
-    private Long restaurantId;
+
 
 }
