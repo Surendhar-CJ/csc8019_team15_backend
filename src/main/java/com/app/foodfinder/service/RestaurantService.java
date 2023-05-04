@@ -48,12 +48,4 @@ public interface RestaurantService {
 
 
 
-    /**
-     * Retrieves all restaurants in the repository and returns a list of RestaurantDTOs containing the restaurants' data.
-     *
-     * @return a list of RestaurantDTOs containing all retrieved restaurants' data
-     */
-    List<RestaurantDTO> getAllRestaurants();
-
-
 }

@@ -15,13 +15,11 @@ public interface ReviewService {
 
 
     /**
-     * Creates a new review for a restaurant based on the provided review data, and returns a ReviewDTO containing the
-     * newly created review's data.
+     * Creates a new review for a restaurant based on the provided review data.
      *
      * @param reviewSubmit the data for the review to create
-     * @return a ReviewDTO containing the newly created review's data
      */
-    ReviewDTO createReview(ReviewSubmit reviewSubmit);
+    void createReview(Long restaurantId, ReviewSubmit reviewSubmit);
 
 
 
@@ -32,29 +30,5 @@ public interface ReviewService {
      * @return a list of ReviewDTOs containing the retrieved reviews' data
      */
     List<ReviewDTO> getAllReviews(Long restaurantId);
-
-
-
-    /**
-     * Updates an existing review with the specified ID based on the provided review data, and returns a ReviewDTO
-     * containing the updated review's data.
-     *
-     * @param reviewId the ID of the review to update
-     * @param reviewSubmit the data to use for updating the review
-     * @return a ReviewDTO containing the updated review's data
-     */
-    ReviewDTO updateReview(Long reviewId, ReviewSubmit reviewSubmit);
-
-
-
-    /**
-     * Deletes an existing review with the specified ID, and throws an exception if the review was not created by the
-     * user with the specified user ID.
-     *
-     * @param reviewId the ID of the review to delete
-     * @param userId the ID of the user attempting to delete the review
-     */
-    void deleteReview(Long reviewId, Long userId);
-
 
 }

@@ -98,15 +98,4 @@ public class RestaurantController {
 
 
 
-    /**
-     * Handles HTTP GET requests to "/food_finder/all-restaurants".
-     *
-     * @return a ResponseEntity with a list of all {@link RestaurantDTO} objects and an HTTP status code of 200 OK.
-     */
-    @GetMapping("/all-restaurants")
-    public ResponseEntity<List<RestaurantDTO>> getAllRestaurants() {
-        return new ResponseEntity<>(restaurantService.getAllRestaurants(), HttpStatus.OK );
-    }
-
-
 }

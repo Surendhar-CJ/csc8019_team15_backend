@@ -53,12 +53,11 @@ public class UserServiceImplementation implements UserService
      *
      * @param user the User entity to register
      *
-     * @return a UserDTO containing the saved user's data
-     *
      * @throws UserExistsException if a user with the same username or email already exists in the repository
+     * @throws InvalidInputException if the email, username or password is not as per the requirements
      */
     @Override
-    public UserDTO userRegister(User user) {
+    public void userRegister(User user) {
         User existingUser = userRepository.findByUsername(user.getUsername());
 
         if (existingUser != null) {
@@ -88,9 +87,7 @@ public class UserServiceImplementation implements UserService
             user.setPassword(hashedPassword);
             userRepository.save(user);
 
-            return userDTOMapper.apply(user);
     }
-
 
 
 
@@ -144,25 +141,6 @@ public class UserServiceImplementation implements UserService
    }
 
 
-
-    /**
-     * This method deletes a user with the ID specified.
-     *
-     * @param id the ID of the user to delete.
-     *
-     * @throws ResourceNotFoundException if no user with the specified ID exists in the repository.
-     */
-    @Override
-    public void deleteUserById(Long id) {
-       Optional<User> user = userRepository.findById(id);
-
-       if(user.isPresent()) {
-           userRepository.deleteById(id);
-       }
-       else {
-           throw new ResourceNotFoundException("User not found");
-       }
-   }
 
 
 }

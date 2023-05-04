@@ -1,9 +1,11 @@
 package com.app.foodfinder.service.implementation;
 
+import com.app.foodfinder.config.jwt.JWTService;
 import com.app.foodfinder.dto.ReviewDTO;
 import com.app.foodfinder.entity.Restaurant;
 import com.app.foodfinder.entity.Review;
 import com.app.foodfinder.entity.User;
+import com.app.foodfinder.exception.custom.InvalidTokenException;
 import com.app.foodfinder.exception.custom.ResourceNotFoundException;
 import com.app.foodfinder.dto.dtomapper.ReviewDTOMapper;
 import com.app.foodfinder.model.ReviewSubmit;
@@ -34,59 +36,75 @@ public class ReviewServiceImplementation  implements ReviewService {
     private final RestaurantRepository restaurantRepository;
     private final UserRepository userRepository;
     private final ReviewDTOMapper reviewDTOMapper;
+    private final JWTService jwtService;
 
 
 
     /**
      * Constructor for ReviewServiceImplementation that initializes the ReviewRepository, RestaurantRepository, UserRepository,
-     * ReviewDTOMapper objects using dependency injection.
+     * ReviewDTOMapper, JWTService objects using dependency injection.
      *
      * @param reviewRepository - repository for Review entity
      * @param restaurantRepository - repository for Restaurant entity
      * @param userRepository - repository for User entity
      * @param reviewDTOMapper - mapper for converting Review entities to DTOs
+     * @param jwtService - jwtService to validate the token and username
      */
     @Autowired
-    public ReviewServiceImplementation(ReviewRepository reviewRepository, RestaurantRepository restaurantRepository, UserRepository userRepository, ReviewDTOMapper reviewDTOMapper) {
+    public ReviewServiceImplementation(ReviewRepository reviewRepository, RestaurantRepository restaurantRepository, UserRepository userRepository, ReviewDTOMapper reviewDTOMapper, JWTService jwtService) {
         this.reviewRepository = reviewRepository;
         this.restaurantRepository = restaurantRepository;
         this.userRepository = userRepository;
         this.reviewDTOMapper = reviewDTOMapper;
+        this.jwtService = jwtService;
     }
 
 
 
     /**
      * This method creates a review based on the ReviewSubmit object
-     * and stores it in the database and maps the created review to a ReviewDTO and returns it.
+     * and stores it in the database and maps the created review to a ReviewDTO.
      *
      * @param reviewSubmit - review submission DTO containing the review details
      *
-     * @return ReviewDTO representing the created review.
      *
      * @throws NullPointerException if reviewSubmit is null
      * @throws ResourceNotFoundException if the restaurant or user associated with the review do not exist
      */
     @Override
-    public ReviewDTO createReview(ReviewSubmit reviewSubmit) {
+    public void createReview(Long restaurantId, ReviewSubmit reviewSubmit) {
+
             if (reviewSubmit == null) {
                 throw new NullPointerException("Review cannot be null");
             }
 
-            Restaurant restaurant = restaurantRepository.findById(reviewSubmit.getRestaurantId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Restaurant not found"));
+            //Checks if the restaurantId is valid
+            Restaurant restaurant = restaurantRepository.findById(restaurantId)
+                .orElseThrow(() -> new ResourceNotFoundException("Restaurant not found"));
 
-            User user = userRepository.findById(reviewSubmit.getUserId())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+            String jwtToken = reviewSubmit.getToken();
+            String username = jwtService.getUsernameFromToken(jwtToken);
 
-            Review review = new Review(reviewSubmit.getComment(), reviewSubmit.getRating(), user, restaurant);
+            //Checks token expiration and username validation
+            User user;
+            if(!jwtService.isTokenExpired(jwtToken)) {
+               user = userRepository.findByUsername(username);
+                if(user == null) {
+                    throw new ResourceNotFoundException("User not found");
+                }
+            }
+            else {
+                throw new InvalidTokenException("Token expired");
+            }
+
+            //Adds a review
+            Review review = new Review(reviewSubmit.getRating(), reviewSubmit.getComment(), user, restaurant);
             reviewRepository.save(review);
 
             //Updates restaurant's overall rating
             restaurant.setOverallRating(updateOverallRating(restaurant));
             restaurantRepository.save(restaurant);
 
-            return reviewDTOMapper.apply(review);
     }
 
 
@@ -115,73 +133,6 @@ public class ReviewServiceImplementation  implements ReviewService {
         return reviews.stream()
                 .map(reviewDTOMapper::apply)
                 .collect(Collectors.toList());
-    }
-
-
-
-    /**
-     * This method updates the existing review in the database based on the ReviewSubmit object passed
-     * and maps the updated review to the ReviewDTO and returns it.
-     *
-     * @param reviewId - ID of the review to update
-     * @param reviewSubmit - review submission DTO containing the updated review details
-     *
-     * @return ReviewDTO representing the updated review
-     *
-     * @throws ResourceNotFoundException if the review or user associated with the review do not exist
-     * @throws IllegalArgumentException if the user trying to update the review is not the same as the user who created the review
-     */
-    @Override
-    public ReviewDTO updateReview(Long reviewId, ReviewSubmit reviewSubmit) {
-        Optional<Review> existingReview = reviewRepository.findById(reviewId);
-
-        Review updatedReview = existingReview
-                                .orElseThrow(() -> new ResourceNotFoundException("Review not found"));
-
-        if(!updatedReview.getUser().getId().equals(reviewSubmit.getUserId())) {
-            throw new IllegalArgumentException("User can only update their reviews and not others");
-        }
-
-        updatedReview.setComment(reviewSubmit.getComment());
-        updatedReview.setRating(reviewSubmit.getRating());
-
-        reviewRepository.save(updatedReview);
-
-        //Updates restaurant's overall rating
-        Restaurant restaurant = updatedReview.getRestaurant();
-        setOverallRating(restaurant);
-
-        return reviewDTOMapper.apply(updatedReview);
-    }
-
-
-
-    /**
-     * This method deletes the existing review in the database based on the reviewID and userID (the user who deletes it).
-     *
-     * @param reviewId - ID of the review to delete
-     * @param userId - ID of the user trying to delete the review
-     *
-     * @throws ResourceNotFoundException if the review or user associated with the review do not exist
-     * @throws IllegalArgumentException if the user trying to delete the review is not the same as the user who created the review
-     */
-    @Override
-    public void deleteReview(Long reviewId, Long userId) {
-        Optional<Review> review = reviewRepository.findById(reviewId);
-
-        Review existingReview = review
-                .orElseThrow(() -> new ResourceNotFoundException("Review not found"));
-
-        if(!existingReview.getUser().getId().equals(userId)) {
-            throw new IllegalArgumentException("User can only delete their reviews and not others");
-        }
-
-        reviewRepository.deleteById(reviewId);
-
-        //Updates overall rating
-        Restaurant restaurant = existingReview.getRestaurant();
-        setOverallRating(restaurant);
-
     }
 
 

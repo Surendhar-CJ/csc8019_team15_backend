@@ -24,7 +24,13 @@ public final class ReviewDTOMapper implements Function<Review, ReviewDTO> {
      */
     @Override
     public ReviewDTO apply(Review review) {
-        return new ReviewDTO(review.getId(), review.getUser().getUsername(), review.getComment(), review.getRating(), review.getRestaurant().getRestaurantID(), review.getUser().getId());
+        return new ReviewDTO(
+                review.getId(),
+                review.getUser().getUsername(),
+                review.getRating(),
+                review.getComment(),
+                review.getRestaurant().getRestaurantID(),
+                review.getUser().getId());
     }
 
 }
