@@ -89,8 +89,7 @@ public class RestaurantController {
     @PostMapping("/restaurants")
     public ResponseEntity<List<RestaurantDTO>> getAllRestaurantsWithinAMileRadius(@RequestBody UserLocation userLocation) {
 
-        if(userLocation == null)
-        {
+        if(userLocation == null) {
             throw new IllegalArgumentException("Please turn on your location");
         }
 
