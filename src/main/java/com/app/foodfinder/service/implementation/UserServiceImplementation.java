@@ -2,10 +2,12 @@ package com.app.foodfinder.service.implementation;
 
 import com.app.foodfinder.dto.UserDTO;
 import com.app.foodfinder.entity.User;
+import com.app.foodfinder.exception.custom.InvalidInputException;
 import com.app.foodfinder.exception.custom.InvalidPasswordException;
 import com.app.foodfinder.exception.custom.ResourceNotFoundException;
 import com.app.foodfinder.dto.dtomapper.UserDTOMapper;
 import com.app.foodfinder.exception.custom.UserExistsException;
+import com.app.foodfinder.model.RegexPattern;
 import com.app.foodfinder.repository.UserRepository;
 import com.app.foodfinder.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,22 +61,36 @@ public class UserServiceImplementation implements UserService
     public UserDTO userRegister(User user) {
         User existingUser = userRepository.findByUsername(user.getUsername());
 
-        if(existingUser != null) {
+        if (existingUser != null) {
             throw new UserExistsException("Username already taken");
         }
 
         existingUser = userRepository.findByEmail(user.getEmail());
 
-        if(existingUser != null) {
+        if (existingUser != null) {
             throw new UserExistsException("User with the email address '" + user.getEmail() + "' already exists");
         }
 
-        String hashedPassword = bCryptPasswordEncoder.encode(user.getPassword());
-        user.setPassword(hashedPassword);
-        userRepository.save(user);
+        // Validate username
+        if (!user.getUsername().matches(RegexPattern.USERNAME_PATTERN)) {
+            throw new InvalidInputException("Username should start with a letter and contain only letters, digits, underscores and dots");
+        }
+        // Validate email
+        if (!user.getEmail().matches(RegexPattern.EMAIL_PATTERN)) {
+            throw new InvalidInputException("Invalid email address");
+        }
+        // Validate password
+        if (!user.getPassword().matches(RegexPattern.PASSWORD_PATTERN)) {
+            throw new InvalidInputException("Password should contain at least 5 characters and only contain letters, digits and underscores");
+        }
 
-        return userDTOMapper.apply(user);
+            String hashedPassword = bCryptPasswordEncoder.encode(user.getPassword());
+            user.setPassword(hashedPassword);
+            userRepository.save(user);
+
+            return userDTOMapper.apply(user);
     }
+
 
 
 

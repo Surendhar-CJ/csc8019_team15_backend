@@ -27,7 +27,7 @@ public class JWTService {
     /**
      * The validity period of the JWT token (in seconds).
      */
-    public static final long JWTTokenValidity = 30 * 60;
+    public static final long JWTTokenValidity = 10 * 60;
 
 
     /**

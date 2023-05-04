@@ -73,8 +73,8 @@ public class ReviewController {
      * @throws ResourceNotFoundException if the restaurantId is not found with a status code of 404 NOT FOUND.
      */
     @GetMapping("/reviews/{restaurantId}")
-    public List<ReviewDTO> getAllReviews(@PathVariable("restaurantId") Long restaurantId) throws ResourceNotFoundException {
-        return reviewService .getAllReviews(restaurantId);
+    public ResponseEntity<List<ReviewDTO>> getAllReviews(@PathVariable("restaurantId") Long restaurantId) throws ResourceNotFoundException {
+        return new ResponseEntity<List<ReviewDTO>>(reviewService.getAllReviews(restaurantId), HttpStatus.OK);
     }
 
 
@@ -105,10 +105,12 @@ public class ReviewController {
     /**
      * Handles HTTP DELETE requests to "/food_finder/restaurants/reviews/{reviewId}/{userId}".
      *
-     * Deletes the review with the specified ID if it was written by the user with the specified ID.
+     * Deletes the review with the specified ID if it was written by the user with the specified ID
      *
      * @param reviewId the ID of the review to delete.
      * @param userId the ID of the user who wrote the review to delete.
+     *
+     * @return a ResponseEntity of String containing a message and a status code 200 OK.
      *
      * @throws ResourceNotFoundException if the reviewId or userId is not found with a status code of 404 NOT FOUND.
      */

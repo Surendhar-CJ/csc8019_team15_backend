@@ -1,6 +1,7 @@
 package com.app.foodfinder.exception;
 
 
+import com.app.foodfinder.exception.custom.InvalidInputException;
 import com.app.foodfinder.exception.custom.InvalidPasswordException;
 import com.app.foodfinder.exception.custom.ResourceNotFoundException;
 import com.app.foodfinder.exception.custom.UserExistsException;
@@ -93,5 +94,19 @@ public final class GlobalExceptionHandler {
         return new ResponseEntity<ErrorResponse>(errorResponse, HttpStatus.CONFLICT);
     }
 
+
+
+    /**
+     * Handles the {@link InvalidInputException} thrown.
+     *
+     * @param invalidInputException The {@link InvalidInputException} to handle.
+     *
+     * @return A ResponseEntity containing the error response and HTTP status code.
+     */
+    @ExceptionHandler(value = InvalidInputException.class)
+    public ResponseEntity<ErrorResponse> handlingInvalidInputException(InvalidInputException invalidInputException){
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), invalidInputException.getMessage(), LocalTime.now());
+        return new ResponseEntity<ErrorResponse>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
     
 }
