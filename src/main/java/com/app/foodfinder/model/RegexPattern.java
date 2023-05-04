@@ -1,6 +1,6 @@
 package com.app.foodfinder.model;
 
-public class RegexPattern {
+public final class RegexPattern {
 
     /**
      * RFC 5322 regular expression for email validation
@@ -10,7 +10,7 @@ public class RegexPattern {
     /**
      * Username valid characters
      */
-    public static final String USERNAME_PATTERN =  "^[a-zA-Z]+[a-zA-Z0-9._]*$";
+    public static final String USERNAME_PATTERN =  "^[a-zA-Z]+[a-zA-Z0-9._]{3,20}+$";
 
     /**
      * Password valid characters

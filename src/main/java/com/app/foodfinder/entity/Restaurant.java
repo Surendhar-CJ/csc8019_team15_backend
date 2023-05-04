@@ -140,7 +140,6 @@ public class  Restaurant {
      */
     public Double averageCostOfADish() {
         List<Menu> menuItems = this.menuItems;
-        System.out.println("Size "+menuItems.size());
 
         double averageCost = 0;
 
@@ -150,7 +149,6 @@ public class  Restaurant {
 
         for(Menu menu : menuItems){
             averageCost += menu.getPrice();
-            System.out.println(menu);
         }
 
         DecimalFormat df = new DecimalFormat("#.##");

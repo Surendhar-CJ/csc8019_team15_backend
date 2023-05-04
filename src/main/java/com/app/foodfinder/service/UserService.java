@@ -51,4 +51,14 @@ public interface UserService {
      * @param id the ID of the user to delete
      */
     void deleteUserById(Long id);
+
+    /**
+     *
+     *
+     * @param user user
+     * @return userDTO
+     */
+    UserDTO userResetPassword(User user);
+
+    UserDTO userChangePassword(String username, String password);
 }

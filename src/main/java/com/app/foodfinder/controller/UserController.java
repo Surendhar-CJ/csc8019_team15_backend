@@ -9,6 +9,7 @@ import com.app.foodfinder.exception.custom.UserExistsException;
 import com.app.foodfinder.model.UserLogin;
 import com.app.foodfinder.model.UserResponse;
 import com.app.foodfinder.service.UserService;
+import com.app.foodfinder.service.implementation.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,17 +30,20 @@ public class UserController {
 
     private final UserService userService;
     private final JWTService jwtService;
+    private final EmailService emailService;
 
 
 
     /**
-     * @param userService the {@link UserService} instance to use for handling user-related operations
-     * @param jwtService the {@link JWTService} instance to use for handling JWT-related operations
+     * @param userService  the {@link UserService} instance to use for handling user-related operations
+     * @param jwtService   the {@link JWTService} instance to use for handling JWT-related operations
+     * @param emailService
      */
     @Autowired
-    public UserController(UserService userService, JWTService jwtService) {
+    public UserController(UserService userService, JWTService jwtService, EmailService emailService) {
         this.userService = userService;
         this.jwtService = jwtService;
+        this.emailService = emailService;
     }
 
 
@@ -58,6 +62,7 @@ public class UserController {
         userService.userRegister(user);
 
         final String jwtToken = jwtService.generateToken(user.getUsername());
+//        final String jwtToken = jwtService.generateToken(user.getEmail());
 
         return new ResponseEntity<String>(jwtToken, HttpStatus.CREATED);
     }
@@ -121,4 +126,36 @@ public class UserController {
         return new ResponseEntity<>("User deleted successfully", HttpStatus.OK);
     }
 
+
+//    @PostMapping("/password-reset")
+//    public ResponseEntity<UserDTO> userResetPassword(@RequestBody User user) throws UserExistsException {
+//        UserDTO userDto = userService.userResetPassword(user);
+//        return new ResponseEntity<>(userDto, HttpStatus.OK);
+//    }
+
+    @PostMapping("/password-reset")
+    public ResponseEntity<UserDTO> userResetPassword(@RequestBody User user) throws UserExistsException {
+        UserDTO userDto = userService.userResetPassword(user);
+        return new ResponseEntity<>(userDto, HttpStatus.OK);
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<UserResponse> userChangePassword(@RequestBody User user) throws UserExistsException {
+        String username = user.getUsername();
+        String password = user.getPassword();
+
+        UserDTO userDTO = userService.userChangePassword(username, password);
+        final String jwtToken = jwtService.generateToken(username);
+
+        return new ResponseEntity<>(new UserResponse(userDTO, jwtToken), HttpStatus.OK);
+    }
+
+
+//    String userEmail, String verification
+    @PostMapping("/verification")
+    public ResponseEntity<String> validation(){
+        emailService.sendEmail("hejang@yeah.net", "Verification Code", "This is the Verification Code:" + "verification");
+//        final String jwtToken = jwtService.generateToken(userEmail);
+        return new ResponseEntity<>("Works", HttpStatus.OK);
+    }
 }

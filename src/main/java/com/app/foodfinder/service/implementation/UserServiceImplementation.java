@@ -164,5 +164,31 @@ public class UserServiceImplementation implements UserService
        }
    }
 
+    @Override
+    public UserDTO userResetPassword(User user) {
+        User existingUser = userRepository.findByUsername(user.getUsername());
+        if (existingUser == null || !existingUser.getEmail().equals(user.getEmail())) {
+            throw new UserExistsException("Username cannot be found");
+        }
+        // need website send new password in userModel
+        String hashedPassword = bCryptPasswordEncoder.encode(user.getPassword());
+        user.setPassword(hashedPassword);
+        userRepository.save(user);
+        return userDTOMapper.apply(user);
+    }
+
+    @Override
+    public UserDTO userChangePassword(String username, String password) {
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            throw new UsernameNotFoundException("Invalid username");
+        }
+        // need website send new password in userModel
+        String hashedPassword = bCryptPasswordEncoder.encode(user.getPassword());
+        user.setPassword(hashedPassword);
+        userRepository.save(user);
+        return userDTOMapper.apply(user);
+    }
+
 
 }
