@@ -1,11 +1,13 @@
 package com.app.foodfinder.config.jwt;
 
 import com.app.foodfinder.config.UserDetailsServiceImplementation;
+import com.app.foodfinder.exception.custom.InvalidTokenException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,6 +30,7 @@ public class JWTFilter extends OncePerRequestFilter {
 
     private final JWTService jwtService;
     private final UserDetailsServiceImplementation userDetailsService;
+    private final TokenBlacklist tokenBlacklist;
 
 
 
@@ -38,9 +41,10 @@ public class JWTFilter extends OncePerRequestFilter {
      * @param userDetailsService the UserDetailsServiceImplementation to use for user authentication
      */
     @Autowired
-    public JWTFilter(JWTService jwtService, UserDetailsServiceImplementation userDetailsService) {
+    public JWTFilter(JWTService jwtService, UserDetailsServiceImplementation userDetailsService, TokenBlacklist tokenBlacklist) {
         this.jwtService = jwtService;
         this.userDetailsService = userDetailsService;
+        this.tokenBlacklist = tokenBlacklist;
     }
 
 
@@ -62,18 +66,21 @@ public class JWTFilter extends OncePerRequestFilter {
         String token = null;
         String username = null;
 
-        if(authorization != null && authorization.startsWith("Bearer "))
-        {
+
+        if(authorization != null && authorization.startsWith("Bearer ")) {
             token = authorization.substring(7);
             username = jwtService.getUsernameFromToken(token);
         }
 
-        if(username != null && SecurityContextHolder.getContext().getAuthentication() == null)
-        {
+        //Checks if the token is blacklisted before authenticating.
+        if (token != null && tokenBlacklist.isTokenBlacklisted(token)) {
+            throw new InvalidTokenException("Token blacklisted");
+        }
+
+        if(username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-            if(jwtService.validateToken(token, userDetails))
-            {
+            if(jwtService.validateToken(token, userDetails)) {
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);

@@ -119,28 +119,4 @@ public class UserServiceImplementation implements UserService
 
 
 
-    /**
-     * This method retrieves a user with the specified ID and returns a UserDTO containing the user's data.
-     *
-     * @param id the ID of the user to retrieve
-     *
-     * @return a UserDTO containing the retrieved user's data
-     *
-     * @throws ResourceNotFoundException if no user with the specified ID exists in the repository
-     */
-    @Override
-    public UserDTO getUserById(Long id) {
-        Optional<User> user = userRepository.findById(id);
-
-        if(user.isPresent()) {
-            return userDTOMapper.apply(user.get());
-        }
-        else {
-            throw new ResourceNotFoundException("User not found");
-        }
-   }
-
-
-
-
 }

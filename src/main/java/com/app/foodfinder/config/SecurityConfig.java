@@ -72,8 +72,7 @@ public class SecurityConfig {
         httpSecurity.authorizeHttpRequests()
                                 .requestMatchers(HttpMethod.POST, "/food_finder/restaurants/reviews/**").authenticated()
                                 .requestMatchers(HttpMethod.PUT, "/food_finder/restaurants/reviews/**").authenticated()
-                                .requestMatchers(HttpMethod.DELETE, "/food_finder/restaurants/reviews/**").authenticated()
-                                .requestMatchers("/food_finder/users/login", "food_finder/users/register").permitAll()
+                                .requestMatchers("food_finder/users/register","/food_finder/users/login", "/food_finder/users/logout" ).permitAll()
                                 .anyRequest().permitAll()
 
                                 .and()

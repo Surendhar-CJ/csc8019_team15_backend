@@ -33,15 +33,4 @@ public interface UserService {
     UserDTO userLogin(String username, String password);
 
 
-
-    /**
-     * Retrieves a user with the specified ID and returns a UserDTO containing the user's data.
-     *
-     * @param id the ID of the user to retrieve
-     * @return a UserDTO containing the retrieved user's data
-     */
-    UserDTO getUserById(Long id);
-
-
-
 }
