@@ -28,9 +28,7 @@ public final class ReviewDTOMapper implements Function<Review, ReviewDTO> {
                 review.getId(),
                 review.getUser().getUsername(),
                 review.getRating(),
-                review.getComment(),
-                review.getRestaurant().getRestaurantID(),
-                review.getUser().getId());
+                review.getComment());
     }
 
 }

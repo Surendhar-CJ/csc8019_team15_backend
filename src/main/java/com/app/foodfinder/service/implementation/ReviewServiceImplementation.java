@@ -70,32 +70,18 @@ public class ReviewServiceImplementation  implements ReviewService {
      *
      * @throws NullPointerException if reviewSubmit is null
      * @throws ResourceNotFoundException if the restaurant or user associated with the review do not exist
+     * @throws InvalidTokenException if the token is expired or invalid.
      */
     @Override
     public void createReview(Long restaurantId, ReviewSubmit reviewSubmit) {
-
-            if (reviewSubmit == null) {
-                throw new NullPointerException("Review cannot be null");
-            }
 
             //Checks if the restaurantId is valid
             Restaurant restaurant = restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Restaurant not found"));
 
-            String jwtToken = reviewSubmit.getToken();
-            String username = jwtService.getUsernameFromToken(jwtToken);
-
-            //Checks token expiration and username validation
-            User user;
-            if(!jwtService.isTokenExpired(jwtToken)) {
-               user = userRepository.findByUsername(username);
-                if(user == null) {
-                    throw new ResourceNotFoundException("User not found");
-                }
-            }
-            else {
-                throw new InvalidTokenException("Token expired");
-            }
+            String token = reviewSubmit.getToken();
+            //Validates the token and returns the user object
+            User user = validateToken(token);
 
             //Adds a review
             Review review = new Review(reviewSubmit.getRating(), reviewSubmit.getComment(), user, restaurant);
@@ -131,7 +117,7 @@ public class ReviewServiceImplementation  implements ReviewService {
         List<Review> reviews = restaurant.getReviews();
 
         return reviews.stream()
-                .map(reviewDTOMapper::apply)
+                .map(reviewDTOMapper)
                 .collect(Collectors.toList());
     }
 
@@ -176,6 +162,33 @@ public class ReviewServiceImplementation  implements ReviewService {
         restaurantRepository.save(restaurant);
     }
 
+
+
+    /**
+     * This method validates the token and returns the user object.
+     *
+     * @param token JWT
+     * @return user object
+     */
+    private User validateToken(String token)
+    {
+        String username = jwtService.getUsernameFromToken(token);
+
+        User user = userRepository.findByUsername(username);
+
+        if(user == null) {
+            throw new ResourceNotFoundException("User not found");
+        }
+
+        if(!jwtService.isTokenExpired(token)) {
+            if (username.equals(user.getUsername()))
+                return user;
+            else
+                throw new InvalidTokenException("Token does not belong to the user");
+        } else {
+            throw new InvalidTokenException("Token expired");
+        }
+    }
 
 
 }

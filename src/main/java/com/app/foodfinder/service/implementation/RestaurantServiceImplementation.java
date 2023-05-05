@@ -1,6 +1,7 @@
 package com.app.foodfinder.service.implementation;
 
 import com.app.foodfinder.dto.RestaurantDTO;
+import com.app.foodfinder.entity.Image;
 import com.app.foodfinder.entity.Restaurant;
 import com.app.foodfinder.exception.custom.ResourceNotFoundException;
 import com.app.foodfinder.dto.dtomapper.RestaurantDTOMapper;
@@ -165,6 +166,7 @@ public class RestaurantServiceImplementation implements RestaurantService {
                 //Sets the approximate walking time from the user
                 restaurant.setApproximateWalkingTimeFromUser(walkingTimeFromUser(latitude, longitude, restaurantLatitude, restaurantLongitude));
 
+                restaurant.setImagesLink(restaurantImagesLink(restaurant));
 
                 nearbyRestaurants.add(restaurant);
             }
@@ -234,6 +236,29 @@ public class RestaurantServiceImplementation implements RestaurantService {
             throw new IllegalArgumentException("Please check the API key and the URL"); // indicate a missing API key or Google Maps URL
         }
 
+    }
+
+
+
+    /**
+     * This method returns a list images links associated with the restaurant
+     *
+     * @param restaurant restaurant object
+     *
+     * @return list of restaurant's images links
+     */
+    private List<String> restaurantImagesLink(Restaurant restaurant)
+    {
+        List<Image> images = restaurant.getImages();
+
+        List<String> imagesLink = new ArrayList<>(images.size());
+
+        for(Image image : images)
+        {
+            imagesLink.add(image.getImageLink());
+        }
+
+        return imagesLink;
     }
 
 }

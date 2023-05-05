@@ -1,5 +1,9 @@
 package com.app.foodfinder.dto;
 
+import com.app.foodfinder.entity.Image;
+
+import java.util.List;
+
 /**
  * This record represents a RestaurantDTO (Data Transfer Object), denoting the class as immutable to prevent external sources from manipulating it.
  *
@@ -34,12 +38,12 @@ public record RestaurantDTO (
     Double overallRating,
     String cuisine,
     String operatingHoursOfTheDay,
-    String imagesLink,
     String menuLink,
     String websiteLink,
     Double averageCostOfADish,
     Double distanceFromUser,
-    Double approximateWalkingTimeFromUser
+    Double approximateWalkingTimeFromUser,
+    List<String> imagesLink
 
 )
 {}

@@ -1,5 +1,6 @@
 package com.app.foodfinder.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import java.math.RoundingMode;
@@ -16,7 +17,7 @@ import java.util.List;
  * This class represents a Restaurant entity.
  * It uses Lombok annotations to generate getters, setters, constructors, equals/hashcode and toString methods at compile-time.
  *
- * NOTE: Here, Spring Data JPA/Hibernate is used ONLY to fetch results from the database(so table mapping is required) and not creating a schema.
+ * NOTE: Here, Spring Data JPA/Hibernate is used ONLY to fetch results from the database(so table mapping is required) and not creating a schema
  *       This has been disabled in application.properties file.
  *
  * @author CSC8019_Team 15
@@ -31,33 +32,26 @@ public class  Restaurant {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", unique = true, nullable = false)
+    @Column(name = "id")
     private Long restaurantID;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name")
     private String name;
 
-    @Column(name = "address", nullable = false)
+    @Column(name = "address")
     private String address;
 
     @Column(name = "phone_number")
     public String phoneNumber;
 
-    @Column(name = "latitude", nullable = false)
+    @Column(name = "latitude")
     private Double latitude;
 
-    @Column(name = "longitude", nullable = false)
+    @Column(name = "longitude")
     private Double longitude;
 
     @Column(name = "rating")
     private Double overallRating;
-
-    @ManyToOne
-    @JoinColumn(name = "cuisine_id")
-    private Cuisine cuisine;
-
-    @Column(name = "images_link", nullable = false)
-    private String imagesLink;
 
     @Column(name = "menu_link")
     private String menuLink;
@@ -66,7 +60,7 @@ public class  Restaurant {
     private String websiteLink;
 
     /**
-     * "@Transient" represents that it not part of the database table column of the restaurant entity.
+     * "@Transient" represents that it is not part of the database table column of the restaurant entity.
      */
     @Transient
     private Double averageCost;
@@ -80,8 +74,18 @@ public class  Restaurant {
     @Transient
     private Double approximateWalkingTimeFromUser;
 
+    @Transient
+    private List<String> imagesLink;
+
+    @ManyToOne
+    @JoinColumn(name = "cuisine_id")
+    private Cuisine cuisine;
+
     @OneToMany(mappedBy = "restaurant")
     private List<Review> reviews;
+
+    @OneToMany(mappedBy = "restaurant")
+    private List<Image> images;
 
     @ManyToMany
     @JoinTable(

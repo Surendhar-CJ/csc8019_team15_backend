@@ -35,13 +35,12 @@ public final class RestaurantDTOMapper implements Function<Restaurant, Restauran
                                  restaurant.getOverallRating(),
                                  restaurant.getCuisine().getName(),
                                  restaurant.getOperatingHoursOfTheDay(),
-                                 restaurant.getImagesLink(),
                                  restaurant.getMenuLink(),
                                  restaurant.getWebsiteLink(),
                                  restaurant.getAverageCost(),
                                  restaurant.getDistanceFromUser(),
-                                 restaurant.getApproximateWalkingTimeFromUser()
-
+                                 restaurant.getApproximateWalkingTimeFromUser(),
+                                 restaurant.getImagesLink()
 
                );
     }
