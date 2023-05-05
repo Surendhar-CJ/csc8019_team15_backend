@@ -73,25 +73,34 @@ public class ReviewServiceImplementation  implements ReviewService {
      * @throws InvalidTokenException if the token is expired or invalid.
      */
     @Override
-    public void createReview(Long restaurantId, ReviewSubmit reviewSubmit) {
+    public ReviewDTO createReview(Long restaurantId, ReviewSubmit reviewSubmit) {
 
-            //Checks if the restaurantId is valid
-            Restaurant restaurant = restaurantRepository.findById(restaurantId)
+        //Checks if the restaurantId is valid
+        Restaurant restaurant = restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Restaurant not found"));
 
-            String token = reviewSubmit.getToken();
-            //Validates the token and returns the user object
-            User user = validateToken(token);
+        String token = reviewSubmit.getToken();
+        //Validates the token and returns the user object
+        User user = validateToken(token);
 
-            //Adds a review
-            Review review = new Review(reviewSubmit.getRating(), reviewSubmit.getComment(), user, restaurant);
-            reviewRepository.save(review);
+        //Check if the user has already submitted a review for the restaurant
+        Review userReview = reviewRepository.findByUserAndRestaurant(user, restaurant);
+        if (userReview != null) {
+            throw new IllegalArgumentException("Review already submitted by the user");
+        }
 
-            //Updates restaurant's overall rating
-            restaurant.setOverallRating(updateOverallRating(restaurant));
-            restaurantRepository.save(restaurant);
+        //Adds a review
+        Review review = new Review(reviewSubmit.getRating(), reviewSubmit.getComment(), user, restaurant);
+        reviewRepository.save(review);
+
+        //Updates restaurant's overall rating
+        restaurant.setOverallRating(updateOverallRating(restaurant));
+        restaurantRepository.save(restaurant);
+
+        return reviewDTOMapper.apply(review);
 
     }
+
 
 
 

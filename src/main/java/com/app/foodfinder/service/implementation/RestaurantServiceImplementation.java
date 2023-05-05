@@ -125,6 +125,8 @@ public class RestaurantServiceImplementation implements RestaurantService {
         restaurant.setOperatingHoursOfTheDay(restaurant.operatingHoursOfTheDay());
         //Sets the approximate walking time from the user
         restaurant.setApproximateWalkingTimeFromUser(walkingTimeFromUser(latitude, longitude, restaurantLatitude, restaurantLongitude));
+        //Sets restaurant's images link
+        restaurant.setImagesLink(restaurantImagesLink(restaurant));
 
         return restaurantDTOMapper.apply(restaurant);
     }
