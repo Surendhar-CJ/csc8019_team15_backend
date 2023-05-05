@@ -1,6 +1,5 @@
 package com.app.foodfinder.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import java.math.RoundingMode;
@@ -138,17 +137,15 @@ public class  Restaurant {
      */
     public Double averageCostOfADish() {
         List<Menu> menuItems = this.menuItems;
-        System.out.println("Size "+menuItems.size());
 
         double averageCost = 0;
 
-        //Returns 0 if the there is no items to avoid division by zero error
+        //Returns 0 if the there is no item to avoid division by zero error
         if(menuItems.size() == 0)
             return averageCost;
 
         for(Menu menu : menuItems){
             averageCost += menu.getPrice();
-            System.out.println(menu);
         }
 
         DecimalFormat df = new DecimalFormat("#.##");
