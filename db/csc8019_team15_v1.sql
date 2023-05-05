@@ -104,7 +104,7 @@ DROP TABLE IF EXISTS `review`;
 CREATE TABLE `review` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `comment` varchar(255) DEFAULT NULL,
-  `rating` int DEFAULT NULL,
+  `rating` double DEFAULT NULL,
   `user_id` bigint unsigned DEFAULT NULL,
   `restaurant_id` bigint unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),

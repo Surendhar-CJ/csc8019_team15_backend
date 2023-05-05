@@ -19,7 +19,7 @@ public interface ReviewService {
      *
      * @param reviewSubmit the data for the review to create
      */
-    void createReview(Long restaurantId, ReviewSubmit reviewSubmit);
+    ReviewDTO createReview(Long restaurantId, ReviewSubmit reviewSubmit);
 
 
 

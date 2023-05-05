@@ -50,16 +50,16 @@ public class ReviewController {
      * @param reviewSubmit ReviewSubmit object containing the review content and the user ID.
      * @param restaurantId ID of the restaurant being reviewed.
      *
-     * @return a ResponseEntity of HTTP status code of 201 CREATED.
+     * @return a ResponseEntity of ReviewDTO representing the created Review with HTTP status code of 201 CREATED.
      *
      * @throws ResourceNotFoundException if the restaurantId is not found with a status code of 404 NOT FOUND.
      * @throws InvalidTokenException if the token is expired or invalid with a status code of 400 BAD REQUEST.
      * @throws NullPointerException if the ReviewSubmit object is null.
      */
     @PostMapping("/reviews/{restaurantId}")
-    public ResponseEntity<Void> addReview(@PathVariable("restaurantId") Long restaurantId, @RequestBody ReviewSubmit reviewSubmit) throws ResourceNotFoundException, InvalidTokenException {
-        reviewService.createReview(restaurantId, reviewSubmit);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    public ResponseEntity<ReviewDTO> addReview(@PathVariable("restaurantId") Long restaurantId, @RequestBody ReviewSubmit reviewSubmit) throws ResourceNotFoundException, InvalidTokenException {
+
+        return new ResponseEntity<ReviewDTO>(reviewService.createReview(restaurantId, reviewSubmit), HttpStatus.CREATED);
     }
 
 
