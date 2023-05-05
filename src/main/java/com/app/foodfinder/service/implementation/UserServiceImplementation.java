@@ -4,7 +4,6 @@ import com.app.foodfinder.dto.UserDTO;
 import com.app.foodfinder.entity.User;
 import com.app.foodfinder.exception.custom.InvalidInputException;
 import com.app.foodfinder.exception.custom.InvalidPasswordException;
-import com.app.foodfinder.exception.custom.ResourceNotFoundException;
 import com.app.foodfinder.dto.dtomapper.UserDTOMapper;
 import com.app.foodfinder.exception.custom.UserExistsException;
 import com.app.foodfinder.model.RegexPattern;
@@ -14,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import java.util.Optional;
 
 
 
