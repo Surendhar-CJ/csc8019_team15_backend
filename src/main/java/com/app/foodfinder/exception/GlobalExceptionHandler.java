@@ -12,6 +12,8 @@ import java.time.LocalTime;
 /**
  * This class serves as a global exception handler.
  *
+ * Exceptions thrown are modified to give a proper response to the client with appropriate status code, message and time.
+ *
  * @author CSC8019_Team 15
  * @since 2023-05-01
  */

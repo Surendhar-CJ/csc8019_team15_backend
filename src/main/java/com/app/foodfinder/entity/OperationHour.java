@@ -1,5 +1,6 @@
 package com.app.foodfinder.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,9 +26,10 @@ public class OperationHour
 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
-    @Column(name = "day_of_Week", unique = true, nullable = false)
+    @Column(name = "day_of_Week")
     private String dayOfWeek;
 
     @Column(name = "opening_time")

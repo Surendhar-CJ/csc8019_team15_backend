@@ -1,13 +1,16 @@
 package com.app.foodfinder.entity;
 
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 
+
 /**
- * This class represents a Menu entity.
+ * This class represents an Image entity.
  * It uses Lombok annotations to generate getters, setters, constructors, equals/hashcode and toString methods at compile-time.
  *
  * NOTE: Here, Spring Data JPA/Hibernate is used only to fetch results from the database(so table mapping is required) and not creating a schema.
@@ -20,16 +23,19 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Menu {
+@Table(name = "image")
+public class Image {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "item_name")
-    private String itemName;
+    @Column(name = "image_link")
+    private String imageLink;
 
-    @Column(name = "price")
-    private Double price;
+    @ManyToOne
+    @JoinColumn(name = "restaurant_id")
+    @JsonIgnore
+    private Restaurant restaurant;
 }
