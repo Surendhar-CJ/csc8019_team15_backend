@@ -1,5 +1,6 @@
 package com.app.foodfinder.controller;
 
+import com.app.foodfinder.config.jwt.TokenBlacklist;
 import com.app.foodfinder.dto.UserDTO;
 import com.app.foodfinder.entity.User;
 import com.app.foodfinder.config.jwt.JWTService;
@@ -29,6 +30,7 @@ public class UserController {
 
     private final UserService userService;
     private final JWTService jwtService;
+    private final TokenBlacklist tokenBlacklist;
 
 
 
@@ -37,9 +39,10 @@ public class UserController {
      * @param jwtService the {@link JWTService} instance to use for handling JWT-related operations
      */
     @Autowired
-    public UserController(UserService userService, JWTService jwtService) {
+    public UserController(UserService userService, JWTService jwtService, TokenBlacklist tokenBlacklist) {
         this.userService = userService;
         this.jwtService = jwtService;
+        this.tokenBlacklist = tokenBlacklist;
     }
 
 
@@ -86,21 +89,17 @@ public class UserController {
 
 
     /**
-     * Handles HTTP GET requests to "/food_finder/users/{id}".
+     * Handles HTTP POST requests to "/food_finder/users/login".
      *
-     * @param id the ID of the user to retrieve.
+     * @param token token to be blacklisted
      *
-     * @return a ResponseEntity with a {@link UserDTO} object and an HTTP status code of 302 FOUND.
-     *
-     * @throws ResourceNotFoundException if the user ID is not found with a status code 404 NOT FOUND.
-     *
+     * @return Response Entity with a status code 200 OK
      */
-    @GetMapping("/{id}")
-    public ResponseEntity<UserDTO> getUserById(@PathVariable("id") Long id) throws ResourceNotFoundException {
-        UserDTO user = userService.getUserById(id);
-        return new ResponseEntity<UserDTO>(user, HttpStatus.FOUND);
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(@RequestBody String token) {
+        tokenBlacklist.addTokenToBlacklist(token);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
-
 
 
 }
