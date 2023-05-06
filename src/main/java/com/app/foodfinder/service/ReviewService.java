@@ -1,7 +1,7 @@
 package com.app.foodfinder.service;
 
 import com.app.foodfinder.dto.ReviewDTO;
-import com.app.foodfinder.model.ReviewSubmit;
+import com.app.foodfinder.utils.ReviewSubmit;
 import java.util.List;
 
 

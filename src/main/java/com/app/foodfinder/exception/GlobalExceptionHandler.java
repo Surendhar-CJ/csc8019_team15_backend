@@ -34,6 +34,20 @@ public final class GlobalExceptionHandler {
     }
 
 
+    /**
+     * Handles the {@link ResourceExistsException} thrown.
+     *
+     * @param resourceExistsException The {@link ResourceExistsException} to handle.
+     *
+     * @return ResponseEntity containing the error response and HTTP status code.
+     */
+    @ExceptionHandler(value = ResourceExistsException.class)
+    public ResponseEntity<ErrorResponse> handlingExistsException(ResourceExistsException resourceExistsException){
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.CONFLICT.value(), resourceExistsException.getMessage(), LocalTime.now());
+        return new ResponseEntity<ErrorResponse>(errorResponse, HttpStatus.CONFLICT);
+    }
+
+
 
     /**
      * Handles the {@link InvalidPasswordException} thrown.
@@ -80,18 +94,6 @@ public final class GlobalExceptionHandler {
 
 
 
-    /**
-     * Handles the {@link UserExistsException} thrown.
-     *
-     * @param userExistsException The {@link UserExistsException} to handle.
-     *
-     * @return A ResponseEntity containing the error response and HTTP status code.
-     */
-    @ExceptionHandler(value = UserExistsException.class)
-    public ResponseEntity<ErrorResponse> handlingUserExistException(UserExistsException userExistsException){
-        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.CONFLICT.value(), userExistsException.getMessage(), LocalTime.now());
-        return new ResponseEntity<ErrorResponse>(errorResponse, HttpStatus.CONFLICT);
-    }
 
 
 

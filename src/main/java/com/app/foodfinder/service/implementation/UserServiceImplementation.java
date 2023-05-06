@@ -5,9 +5,10 @@ import com.app.foodfinder.entity.User;
 import com.app.foodfinder.exception.custom.InvalidInputException;
 import com.app.foodfinder.exception.custom.InvalidPasswordException;
 import com.app.foodfinder.dto.dtomapper.UserDTOMapper;
-import com.app.foodfinder.exception.custom.UserExistsException;
-import com.app.foodfinder.model.RegexPattern;
+import com.app.foodfinder.exception.custom.ResourceExistsException;
+import com.app.foodfinder.utils.RegexPattern;
 import com.app.foodfinder.repository.UserRepository;
+import com.app.foodfinder.utils.EmailService;
 import com.app.foodfinder.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -28,6 +29,7 @@ public class UserServiceImplementation implements UserService
     private final UserRepository userRepository;
     private final UserDTOMapper userDTOMapper;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final EmailService emailService;
 
 
     /**
@@ -38,10 +40,11 @@ public class UserServiceImplementation implements UserService
      * @param bCryptPasswordEncoder BCryptPasswordEncoder class that performs password hashing.
      */
     @Autowired
-    public UserServiceImplementation(UserRepository userRepository, UserDTOMapper userDTOMapper, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public UserServiceImplementation(UserRepository userRepository, UserDTOMapper userDTOMapper, BCryptPasswordEncoder bCryptPasswordEncoder, EmailService emailService) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.userDTOMapper = userDTOMapper;
+        this.emailService = emailService;
     }
 
 
@@ -51,7 +54,7 @@ public class UserServiceImplementation implements UserService
      *
      * @param user the User entity to register
      *
-     * @throws UserExistsException if a user with the same username or email already exists in the repository
+     * @throws ResourceExistsException if a user with the same username or email already exists in the repository
      * @throws InvalidInputException if the email, username or password is not as per the requirements
      */
     @Override
@@ -59,13 +62,16 @@ public class UserServiceImplementation implements UserService
         User existingUser = userRepository.findByUsername(user.getUsername());
 
         if (existingUser != null) {
-            throw new UserExistsException("Username already taken");
+            throw new ResourceExistsException("Username already taken");
         }
 
         existingUser = userRepository.findByEmail(user.getEmail());
 
         if (existingUser != null) {
-            throw new UserExistsException("User with the email address '" + user.getEmail() + "' already exists");
+            throw new ResourceExistsException("User with the email address '" + user.getEmail() + "' already exists");
+        }
+        else {
+            emailService.sendVerificationEmail(user.getEmail(), "https://www.google.com/");
         }
 
         // Validate username
@@ -115,6 +121,34 @@ public class UserServiceImplementation implements UserService
 
     }
 
+
+
+
+  /*  @Override
+    public UserDTO userResetPassword(User user) {
+        User existingUser = userRepository.findByUsername(user.getUsername());
+        if (existingUser == null || !existingUser.getEmail().equals(user.getEmail())) {
+            throw new UsernameNotFoundException("Username cannot be found");
+        }
+        // need website send new password in userModel
+        String hashedPassword = bCryptPasswordEncoder.encode(user.getPassword());
+        user.setPassword(hashedPassword);
+        userRepository.save(user);
+        return userDTOMapper.apply(user);
+    }
+
+    @Override
+    public UserDTO userChangePassword(String username, String password) {
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            throw new UsernameNotFoundException("Invalid username");
+        }
+        // need website send new password in userModel
+        String hashedPassword = bCryptPasswordEncoder.encode(user.getPassword());
+        user.setPassword(hashedPassword);
+        userRepository.save(user);
+        return userDTOMapper.apply(user);
+    } */
 
 
 }

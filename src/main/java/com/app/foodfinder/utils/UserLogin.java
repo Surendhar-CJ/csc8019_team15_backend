@@ -1,4 +1,4 @@
-package com.app.foodfinder.model;
+package com.app.foodfinder.utils;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

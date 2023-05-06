@@ -1,4 +1,4 @@
-package com.app.foodfinder.model;
+package com.app.foodfinder.utils;
 
 import com.app.foodfinder.dto.UserDTO;
 import lombok.AllArgsConstructor;
@@ -20,6 +20,6 @@ import lombok.Getter;
 @AllArgsConstructor
 public final class UserResponse {
 
-    private final UserDTO user;
+    private final UserDTO userObj;
     private final String token;
 }

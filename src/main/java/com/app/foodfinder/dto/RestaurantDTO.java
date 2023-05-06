@@ -37,7 +37,7 @@ public record RestaurantDTO (
     Double longitude,
     Double overallRating,
     String cuisine,
-    String operatingHoursOfTheDay,
+    List<String> operatingHoursOfTheWeek,
     String menuLink,
     String websiteLink,
     Double averageCostOfADish,

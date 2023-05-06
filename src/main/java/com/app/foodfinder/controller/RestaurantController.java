@@ -3,7 +3,7 @@ package com.app.foodfinder.controller;
 
 import com.app.foodfinder.dto.RestaurantDTO;
 import com.app.foodfinder.exception.custom.ResourceNotFoundException;
-import com.app.foodfinder.model.UserLocation;
+import com.app.foodfinder.utils.UserLocation;
 import com.app.foodfinder.service.RestaurantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

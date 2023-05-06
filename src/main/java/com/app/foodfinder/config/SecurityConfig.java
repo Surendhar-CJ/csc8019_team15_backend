@@ -15,9 +15,14 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 
- /**
+/**
   * The SecurityConfig class is responsible for configuring Spring Security to authenticate and authorize incoming requests based on the defined rules.
   * It defines the user details service, password encoder, authentication provider, and security filter chain.
   *
@@ -69,9 +74,10 @@ public class SecurityConfig {
      */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
-        httpSecurity.authorizeHttpRequests()
+        httpSecurity.cors()
+                .and()
+                                .authorizeHttpRequests()
                                 .requestMatchers(HttpMethod.POST, "/food_finder/restaurants/reviews/**").authenticated()
-                                .requestMatchers(HttpMethod.PUT, "/food_finder/restaurants/reviews/**").authenticated()
                                 .requestMatchers("food_finder/users/register","/food_finder/users/login", "/food_finder/users/logout" ).permitAll()
                                 .anyRequest().permitAll()
 
@@ -83,8 +89,8 @@ public class SecurityConfig {
                                 .authenticationProvider(authenticationProvider())
                                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
-        httpSecurity.csrf().disable();
 
+        httpSecurity.csrf().disable();
         return httpSecurity.build();
     }
 
@@ -114,6 +120,21 @@ public class SecurityConfig {
         authenticationProvider.setPasswordEncoder(bCryptPasswordEncoder());
         return authenticationProvider;
     }
+
+
+
+     @Bean
+     CorsConfigurationSource corsConfigurationSource() {
+         CorsConfiguration configuration = new CorsConfiguration();
+         configuration.setAllowedOrigins(Arrays.asList("*"));
+         configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE","OPTIONS"));
+         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
+
+         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+         source.registerCorsConfiguration("/**", configuration);
+
+         return source;
+     }
 
 
 }

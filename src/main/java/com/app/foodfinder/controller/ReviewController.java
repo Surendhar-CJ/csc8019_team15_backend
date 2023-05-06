@@ -3,7 +3,7 @@ package com.app.foodfinder.controller;
 import com.app.foodfinder.dto.ReviewDTO;
 import com.app.foodfinder.exception.custom.InvalidTokenException;
 import com.app.foodfinder.exception.custom.ResourceNotFoundException;
-import com.app.foodfinder.model.ReviewSubmit;
+import com.app.foodfinder.utils.ReviewSubmit;
 import com.app.foodfinder.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -58,7 +58,7 @@ public class ReviewController {
      */
     @PostMapping("/reviews/{restaurantId}")
     public ResponseEntity<ReviewDTO> addReview(@PathVariable("restaurantId") Long restaurantId, @RequestBody ReviewSubmit reviewSubmit) throws ResourceNotFoundException, InvalidTokenException {
-
+        System.out.println(reviewSubmit);
         return new ResponseEntity<ReviewDTO>(reviewService.createReview(restaurantId, reviewSubmit), HttpStatus.CREATED);
     }
 

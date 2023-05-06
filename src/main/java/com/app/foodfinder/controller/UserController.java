@@ -5,10 +5,10 @@ import com.app.foodfinder.dto.UserDTO;
 import com.app.foodfinder.entity.User;
 import com.app.foodfinder.config.jwt.JWTService;
 import com.app.foodfinder.exception.custom.InvalidPasswordException;
-import com.app.foodfinder.exception.custom.ResourceNotFoundException;
-import com.app.foodfinder.exception.custom.UserExistsException;
-import com.app.foodfinder.model.UserLogin;
-import com.app.foodfinder.model.UserResponse;
+import com.app.foodfinder.exception.custom.ResourceExistsException;
+import com.app.foodfinder.utils.UserLogin;
+import com.app.foodfinder.utils.UserResponse;
+import com.app.foodfinder.utils.EmailService;
 import com.app.foodfinder.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,6 +32,11 @@ public class UserController {
     private final JWTService jwtService;
     private final TokenBlacklist tokenBlacklist;
 
+    private final EmailService emailService;
+
+
+
+
 
 
     /**
@@ -39,10 +44,11 @@ public class UserController {
      * @param jwtService the {@link JWTService} instance to use for handling JWT-related operations
      */
     @Autowired
-    public UserController(UserService userService, JWTService jwtService, TokenBlacklist tokenBlacklist) {
+    public UserController(UserService userService, JWTService jwtService, TokenBlacklist tokenBlacklist, EmailService emailService) {
         this.userService = userService;
         this.jwtService = jwtService;
         this.tokenBlacklist = tokenBlacklist;
+        this.emailService = emailService;
     }
 
 
@@ -54,10 +60,10 @@ public class UserController {
      *
      * @return a ResponseEntity with an HTTP status code of 201 CREATED.
      *
-     * @throws UserExistsException if the username or email address is already in use with a status code of 409 CONFLICT.
+     * @throws ResourceExistsException if the username or email address is already in use with a status code of 409 CONFLICT.
      */
     @PostMapping("/register")
-    public ResponseEntity<Void> register(@RequestBody User user) throws UserExistsException {
+    public ResponseEntity<Void> register(@RequestBody User user) throws ResourceExistsException {
         userService.userRegister(user);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -100,6 +106,25 @@ public class UserController {
         tokenBlacklist.addTokenToBlacklist(token);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+
+
+  /*  @PostMapping("/password-reset")
+    public ResponseEntity<UserDTO> userResetPassword(@RequestBody User user) throws ResourceExistsException {
+        UserDTO userDto = userService.userResetPassword(user);
+        return new ResponseEntity<>(userDto, HttpStatus.OK);
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<UserResponse> userChangePassword(@RequestBody User user) throws ResourceExistsException {
+        String username = user.getUsername();
+        String password = user.getPassword();
+
+        UserDTO userDTO = userService.userChangePassword(username, password);
+        final String jwtToken = jwtService.generateToken(username);
+
+        return new ResponseEntity<>(new UserResponse(userDTO, jwtToken), HttpStatus.OK);
+    } */
 
 
 }
