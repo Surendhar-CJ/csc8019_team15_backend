@@ -8,7 +8,7 @@
 		<version>3.0.5</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.app</groupId>
+	<groupId>uk.ac.ncl.tastetracker</groupId>
 	<artifactId>csc8019team15_backend_tastetracker</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>foodfinder</name>
