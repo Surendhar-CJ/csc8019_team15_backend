@@ -33,4 +33,10 @@ public interface UserService {
     UserDTO userLogin(String username, String password);
 
 
+
+    /* UserDTO userResetPassword(User user);
+
+
+    UserDTO userChangePassword(String username, String password); */
+
 }

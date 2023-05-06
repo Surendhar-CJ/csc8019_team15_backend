@@ -88,6 +88,8 @@ public class RestaurantServiceImplementation implements RestaurantService {
 
         restaurant.setAverageCost(restaurant.averageCostOfADish());
         restaurant.setOperatingHoursOfTheDay(restaurant.operatingHoursOfTheDay());
+        restaurant.setImagesLink(restaurant.imagesLink());
+        restaurant.setOperatingHoursOfTheWeek(restaurant.operatingHoursOfTheWeek());
 
         return restaurantDTOMapper.apply(restaurant);
     }
@@ -126,8 +128,12 @@ public class RestaurantServiceImplementation implements RestaurantService {
         //Sets the approximate walking time from the user
         restaurant.setApproximateWalkingTimeFromUser(walkingTimeFromUser(latitude, longitude, restaurantLatitude, restaurantLongitude));
         //Sets restaurant's images link
-        restaurant.setImagesLink(restaurantImagesLink(restaurant));
+        restaurant.setImagesLink(restaurant.imagesLink());
+        //Sets restaurant's operating times
+        restaurant.setOperatingHoursOfTheWeek(restaurant.operatingHoursOfTheWeek());
 
+
+        //Maps Restaurant to RestaurantDTO
         return restaurantDTOMapper.apply(restaurant);
     }
 
@@ -167,17 +173,22 @@ public class RestaurantServiceImplementation implements RestaurantService {
                 restaurant.setOperatingHoursOfTheDay(restaurant.operatingHoursOfTheDay());
                 //Sets the approximate walking time from the user
                 restaurant.setApproximateWalkingTimeFromUser(walkingTimeFromUser(latitude, longitude, restaurantLatitude, restaurantLongitude));
-
-                restaurant.setImagesLink(restaurantImagesLink(restaurant));
+                //Sets restaurant's images link
+                restaurant.setImagesLink(restaurant.imagesLink());
+                //Sets restaurant's operating times
+                restaurant.setOperatingHoursOfTheWeek(restaurant.operatingHoursOfTheWeek());
 
                 nearbyRestaurants.add(restaurant);
             }
         }
 
+
+        //Maps Restaurant to Restaurant DTO
         return nearbyRestaurants.stream()
                 .map(restaurantDTOMapper)
                 .collect(Collectors.toList());
     }
+
 
 
 
@@ -214,6 +225,7 @@ public class RestaurantServiceImplementation implements RestaurantService {
 
             //Converting the response data to a JSONObject, then extracting the route from it.
             JSONObject json = new JSONObject(response.toString());
+            System.out.println(json);
             JSONArray routes = json.getJSONArray("routes");
             JSONObject route = routes.getJSONObject(0);
             JSONArray legs = route.getJSONArray("legs"); //
@@ -241,26 +253,6 @@ public class RestaurantServiceImplementation implements RestaurantService {
 
 
 
-    /**
-     * This method returns a list images links associated with the restaurant
-     *
-     * @param restaurant restaurant object
-     *
-     * @return list of restaurant's images links
-     */
-    private List<String> restaurantImagesLink(Restaurant restaurant)
-    {
-        List<Image> images = restaurant.getImages();
-
-        List<String> imagesLink = new ArrayList<>(images.size());
-
-        for(Image image : images)
-        {
-            imagesLink.add(image.getImageLink());
-        }
-
-        return imagesLink;
-    }
 
 }
 

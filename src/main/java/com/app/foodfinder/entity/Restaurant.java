@@ -8,6 +8,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -58,6 +59,8 @@ public class  Restaurant {
     @Column(name = "website_link")
     private String websiteLink;
 
+
+
     /**
      * "@Transient" represents that it is not part of the database table column of the restaurant entity.
      */
@@ -74,7 +77,13 @@ public class  Restaurant {
     private Double approximateWalkingTimeFromUser;
 
     @Transient
+    private List<String> operatingHoursOfTheWeek;
+
+    @Transient
     private List<String> imagesLink;
+
+
+
 
     @ManyToOne
     @JoinColumn(name = "cuisine_id")
@@ -106,6 +115,8 @@ public class  Restaurant {
 
 
 
+
+
     /**
      * This method checks if the restaurant is open.
      *
@@ -127,6 +138,8 @@ public class  Restaurant {
         }
         return false;
     }
+
+
 
 
 
@@ -189,6 +202,8 @@ public class  Restaurant {
 
 
 
+
+
     /**
      * This method returns the operating hours of the restaurant for the current day of the week.
      *
@@ -216,5 +231,51 @@ public class  Restaurant {
     }
 
 
+    /**
+     * This method returns restaurant's operating hours of the week
+     *
+     * @return restaurant's operating hours
+     */
+
+    public List<String> operatingHoursOfTheWeek()
+    {
+        List<String> operatingHours = new ArrayList<>();
+        List<OperationHour> restaurantOperatingHours = new ArrayList<>();
+        restaurantOperatingHours = this.operationHours;
+
+        for(OperationHour operationHour : restaurantOperatingHours)
+        {
+            LocalTime openingTime = LocalTime.parse(operationHour.getOpeningTime());
+            LocalTime closingTime = LocalTime.parse(operationHour.getClosingTime());
+
+            String timings = String.format("%s - %s", openingTime.format(DateTimeFormatter.ofPattern("HH:mm")), closingTime.format(DateTimeFormatter.ofPattern("HH:mm")));
+
+            operatingHours.add(timings);
+        }
+
+        return operatingHours;
+    }
+
+
+
+
+    /**
+     * This method returns a list images links associated with the restaurant
+     *
+     * @return list of restaurant's images links
+     */
+    public List<String> imagesLink()
+    {
+        List<Image> images = this.images;
+
+        List<String> imagesLink = new ArrayList<>(images.size());
+
+        for(Image image : images)
+        {
+            imagesLink.add(image.getImageLink());
+        }
+
+        return imagesLink;
+    }
 
 }

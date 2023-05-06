@@ -6,9 +6,10 @@ import com.app.foodfinder.entity.Restaurant;
 import com.app.foodfinder.entity.Review;
 import com.app.foodfinder.entity.User;
 import com.app.foodfinder.exception.custom.InvalidTokenException;
+import com.app.foodfinder.exception.custom.ResourceExistsException;
 import com.app.foodfinder.exception.custom.ResourceNotFoundException;
 import com.app.foodfinder.dto.dtomapper.ReviewDTOMapper;
-import com.app.foodfinder.model.ReviewSubmit;
+import com.app.foodfinder.utils.ReviewSubmit;
 import com.app.foodfinder.repository.RestaurantRepository;
 import com.app.foodfinder.repository.ReviewRepository;
 import com.app.foodfinder.repository.UserRepository;
@@ -85,7 +86,7 @@ public class ReviewServiceImplementation  implements ReviewService {
         //Check if the user has already submitted a review for the restaurant
         Review userReview = reviewRepository.findByUserAndRestaurant(user, restaurant);
         if (userReview != null) {
-            throw new IllegalArgumentException("Review already submitted by the user");
+            throw new ResourceExistsException("You have submitted a review already");
         }
 
         //Adds a review
@@ -189,10 +190,12 @@ public class ReviewServiceImplementation  implements ReviewService {
         }
 
         if(!jwtService.isTokenExpired(token)) {
-            if (username.equals(user.getUsername()))
+            if (username.equals(user.getUsername())) {
                 return user;
-            else
+            }
+            else {
                 throw new InvalidTokenException("Token does not belong to the user");
+            }
         } else {
             throw new InvalidTokenException("Token expired");
         }
