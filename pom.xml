@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.app</groupId>
-	<artifactId>foodfinder</artifactId>
+	<artifactId>csc8019team15_backend_tastetracker</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>foodfinder</name>
 	<description>Restaurant finder website</description>
