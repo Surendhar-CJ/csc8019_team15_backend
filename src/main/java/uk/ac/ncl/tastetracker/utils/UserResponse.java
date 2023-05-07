@@ -11,15 +11,23 @@ import lombok.Getter;
  * during a successful user registration and login.
  * It uses Lombok annotations to generate getters, all argument constructor, equals/hashcode and toString methods at compile-time.
  *
- * @author CSC8019_Team 15
- * @since 2023-05-01
+ * @author Surendhar Chandran Jayapal
+ * @version 1.5 (06-05-2023)
+ * @since 1.2 (28-04-2023)
  */
-
 @Data
 @Getter
 @AllArgsConstructor
 public final class UserResponse {
 
+    /**
+     * Represents the UserDTO object which contains User ID and Username.
+     * Passwords are not sent back to the client for security reasons.
+     */
     private final UserDTO userObj;
+
+    /**
+     * Represents the JWT generated for the user.
+     */
     private final String token;
 }

@@ -2,13 +2,12 @@ package uk.ac.ncl.tastetracker.service.implementation;
 
 import uk.ac.ncl.tastetracker.dto.UserDTO;
 import uk.ac.ncl.tastetracker.entity.User;
+import uk.ac.ncl.tastetracker.exception.custom.InvalidCredentialsException;
 import uk.ac.ncl.tastetracker.exception.custom.InvalidInputException;
-import uk.ac.ncl.tastetracker.exception.custom.InvalidPasswordException;
 import uk.ac.ncl.tastetracker.dto.dtomapper.UserDTOMapper;
 import uk.ac.ncl.tastetracker.exception.custom.ResourceExistsException;
 import uk.ac.ncl.tastetracker.utils.RegexPattern;
 import uk.ac.ncl.tastetracker.repository.UserRepository;
-import uk.ac.ncl.tastetracker.utils.EmailService;
 import uk.ac.ncl.tastetracker.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -19,16 +18,29 @@ import org.springframework.stereotype.Service;
 /**
  * This class implements the UserService interface to interact with UserRepository.
  *
- * @author CSC8019_Team 15
- * @since 2023-05-01
+ * @author Jiang He
+ * @version 1.5 (06-05-2023)
+ * @since 1.1 (22-04-2023)
  */
 @Service
 public class UserServiceImplementation implements UserService
 {
+
+    /**
+     * UserRepository to interact with the User entity in the database.
+     */
     private final UserRepository userRepository;
+
+    /**
+     * UserDTOMapper to map between User entities and DTOs.
+     */
     private final UserDTOMapper userDTOMapper;
+
+    /**
+     * BCryptPasswordEncoder to encode and decode user passwords.
+     */
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final EmailService emailService;
+
 
 
     /**
@@ -39,12 +51,13 @@ public class UserServiceImplementation implements UserService
      * @param bCryptPasswordEncoder BCryptPasswordEncoder class that performs password hashing.
      */
     @Autowired
-    public UserServiceImplementation(UserRepository userRepository, UserDTOMapper userDTOMapper, BCryptPasswordEncoder bCryptPasswordEncoder, EmailService emailService) {
+    public UserServiceImplementation(UserRepository userRepository, UserDTOMapper userDTOMapper, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.userDTOMapper = userDTOMapper;
-        this.emailService = emailService;
     }
+
+
 
 
 
@@ -58,39 +71,24 @@ public class UserServiceImplementation implements UserService
      */
     @Override
     public void userRegister(User user) {
-        User existingUser = userRepository.findByUsername(user.getUsername());
 
-        if (existingUser != null) {
+        //Validates user credentials against the requirements
+        validateUserInput(user);
+
+        if (userRepository.findByUsername(user.getUsername()) != null) {
             throw new ResourceExistsException("Username already taken");
         }
 
-        existingUser = userRepository.findByEmail(user.getEmail());
-
-        if (existingUser != null) {
+        if (userRepository.findByEmail(user.getEmail()) != null) {
             throw new ResourceExistsException("User with the email address '" + user.getEmail() + "' already exists");
         }
-        else {
-            emailService.sendVerificationEmail(user.getEmail(), "https://www.google.com/");
-        }
 
-        // Validate username
-        if (!user.getUsername().matches(RegexPattern.USERNAME_PATTERN)) {
-            throw new InvalidInputException("Username should start with a letter and contain only letters, digits, underscores and dots");
-        }
-        // Validate email
-        if (!user.getEmail().matches(RegexPattern.EMAIL_PATTERN)) {
-            throw new InvalidInputException("Invalid email address");
-        }
-        // Validate password
-        if (!user.getPassword().matches(RegexPattern.PASSWORD_PATTERN)) {
-            throw new InvalidInputException("Password should contain at least 5 characters and only contain letters, digits and underscores");
-        }
-
-            String hashedPassword = bCryptPasswordEncoder.encode(user.getPassword());
-            user.setPassword(hashedPassword);
-            userRepository.save(user);
-
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        userRepository.save(user);
     }
+
+
+
 
 
 
@@ -103,51 +101,56 @@ public class UserServiceImplementation implements UserService
      * @return a UserDTO containing the authenticated user's data
      *
      * @throws UsernameNotFoundException if the provided username does not exist in the repository
-     * @throws InvalidPasswordException if the provided password does not match the user's password
+     * @throws InvalidCredentialsException if the provided password does not match the user's password
      */
     @Override
     public UserDTO userLogin(String username, String password) {
+
         User user = userRepository.findByUsername(username);
 
-        if (user == null || !username.matches(user.getUsername()) ) {
+        if (user == null || !username.matches(user.getUsername()) || username.matches("(?i)null")){
             throw new UsernameNotFoundException("Invalid username");
         }
-        else if(!bCryptPasswordEncoder.matches(password, user.getPassword())) {
-            throw new InvalidPasswordException("Invalid Password");
+        else if(!bCryptPasswordEncoder.matches(password, user.getPassword()) || username.matches("(?i)null")) {
+            throw new InvalidCredentialsException("Invalid Password");
         }
 
         return userDTOMapper.apply(user);
-
     }
 
 
 
 
-  /*  @Override
-    public UserDTO userResetPassword(User user) {
-        User existingUser = userRepository.findByUsername(user.getUsername());
-        if (existingUser == null || !existingUser.getEmail().equals(user.getEmail())) {
-            throw new UsernameNotFoundException("Username cannot be found");
-        }
-        // need website send new password in userModel
-        String hashedPassword = bCryptPasswordEncoder.encode(user.getPassword());
-        user.setPassword(hashedPassword);
-        userRepository.save(user);
-        return userDTOMapper.apply(user);
-    }
 
-    @Override
-    public UserDTO userChangePassword(String username, String password) {
-        User user = userRepository.findByUsername(username);
-        if (user == null) {
-            throw new UsernameNotFoundException("Invalid username");
+
+    /**
+     * This method validates user inputs against the required conditions
+     *
+     * @param user user object that contains username, email and password
+     *
+     * @throws InvalidInputException if the email, username or password is not as per the requirements
+     */
+    private void validateUserInput(User user) {
+        if (user.getUsername() == null || user.getUsername().matches("(?i)null")) {
+            throw new InvalidInputException("Invalid username");
         }
-        // need website send new password in userModel
-        String hashedPassword = bCryptPasswordEncoder.encode(user.getPassword());
-        user.setPassword(hashedPassword);
-        userRepository.save(user);
-        return userDTOMapper.apply(user);
-    } */
+
+        if (!user.getUsername().matches(RegexPattern.USERNAME_PATTERN)) {
+            throw new InvalidInputException("Username should start with a letter and contain only letters, digits, underscores and dots, and must be at least 4 characters long");
+        }
+
+        if (!user.getEmail().matches(RegexPattern.EMAIL_PATTERN)) {
+            throw new InvalidInputException("Invalid email address");
+        }
+
+        if (user.getPassword() == null || user.getPassword().matches("(?i)null")) {
+            throw new InvalidInputException("Invalid password");
+        }
+
+        if (!user.getPassword().matches(RegexPattern.PASSWORD_PATTERN)) {
+            throw new InvalidInputException("Password should contain at least 8 characters including at least one number and one symbol from !@#$%^&*");
+        }
+    }
 
 
 }

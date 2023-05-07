@@ -8,24 +8,35 @@ import java.util.Collection;
 
 
 /**
- * This class implements Spring Security's UserDetails interface that represents a user's details.
+ * This class implements Spring Security's UserDetails interface that represents a user's details
+ * and provides methods for account validity. It also contains a Collection of GrantedAuthorities which is not
+ * implemented and used.
  *
- * @author CSC8019_Team 15
- * @since 2023-05-01
+ * @author Surendhar Chandran Jayapal
+ * @version 1.5 (Date - 06-05-2023)
+ * @since 1.0 (Date - 17-04-2023)
  */
-public class UserDetailsImplementation implements UserDetails {
+public final class CustomUserDetails implements UserDetails {
 
+
+    /**
+     * Username of the user
+     */
     private final String username;
+
+    /**
+     * Password of the user
+     */
     private final String password;
 
 
 
     /**
-     * Constructs a new UserDetailsImplementation with the given User object's username and password.
+     * Constructs a new CustomUserDetails with the given User object's username and password.
      *
      * @param user User object
      */
-    public UserDetailsImplementation(User user) {
+    public CustomUserDetails(User user) {
         this.username = user.getUsername();
         this.password = user.getPassword();
     }

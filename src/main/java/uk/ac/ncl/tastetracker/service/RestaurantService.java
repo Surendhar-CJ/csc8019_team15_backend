@@ -6,20 +6,11 @@ import java.util.List;
 /**
  * This interface defines methods for accessing restaurant data.
  *
- * @author CSC8019_Team 15
- * @since 2023-05-01
+ * @author Surendhar Chandran Jayapal
+ * @version 1.5 (06-05-2023)
+ * @since 1.0 (17-04-2023)
  */
 public interface RestaurantService {
-
-
-    /**
-     * Retrieves a restaurant with the specified ID and returns a RestaurantDTO containing the restaurant's data.
-     *
-     * @param restaurantId the ID of the restaurant to retrieve
-     *
-     * @return a RestaurantDTO containing the retrieved restaurant's data
-     */
-    RestaurantDTO getRestaurantById(Long restaurantId);
 
 
 
@@ -31,7 +22,7 @@ public interface RestaurantService {
      *
      * @return a RestaurantDTO containing the retrieved restaurant's data
      */
-    RestaurantDTO getRestaurantByIdWithUserLocation(Long restaurantId, Double latitude, Double longitude);
+    RestaurantDTO getRestaurantById(Long restaurantId, Double latitude, Double longitude);
 
 
 

@@ -6,8 +6,9 @@ import uk.ac.ncl.tastetracker.entity.User;
 /**
  * Defines methods for managing user accounts and authentication.
  *
- * @author CSC8019_Team 15
- * @since 2023-05-01
+ * @author Jiang He
+ * @version 1.5 (06-05-2023)
+ * @since 1.1 (22-04-2023)
  */
 public interface UserService {
 
@@ -31,12 +32,5 @@ public interface UserService {
      * @return a UserDTO containing the authenticated user's data
      */
     UserDTO userLogin(String username, String password);
-
-
-
-    /* UserDTO userResetPassword(User user);
-
-
-    UserDTO userChangePassword(String username, String password); */
 
 }

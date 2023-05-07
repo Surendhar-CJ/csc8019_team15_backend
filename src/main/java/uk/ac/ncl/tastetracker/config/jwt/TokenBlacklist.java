@@ -1,20 +1,31 @@
 package uk.ac.ncl.tastetracker.config.jwt;
 
 import org.springframework.stereotype.Component;
+import uk.ac.ncl.tastetracker.entity.User;
+import uk.ac.ncl.tastetracker.exception.custom.InvalidCredentialsException;
+import uk.ac.ncl.tastetracker.exception.custom.InvalidInputException;
+import uk.ac.ncl.tastetracker.exception.custom.ResourceNotFoundException;
+
 import java.util.HashSet;
 import java.util.Set;
 
 
 /**
- * This class is used to store and check the blacklisted tokens.
+ * TokenBlackList class is used to check and store the blacklisted tokens if the user logs out.
  *
- * @author CSC8019_Team15
- * @since 01-05-2023
+ * @author Surendhar Chandran Jayapal
+ * @version 1.5 (Date - 06-05-2023)
+ * @since 1.4 (Date - 01-05-2023)
  */
 @Component
 public class TokenBlacklist {
 
+
+    /**
+     * Set to store all the blacklisted tokens
+     */
     private final Set<String> blacklistedTokens = new HashSet<>();
+
 
 
 
@@ -25,8 +36,9 @@ public class TokenBlacklist {
      * @param token token to be blacklisted
      */
     public void addTokenToBlacklist(String token) {
-        blacklistedTokens.add(token);
+        blacklistedTokens.add(validateToken(token));
     }
+
 
 
 
@@ -39,6 +51,28 @@ public class TokenBlacklist {
      * @return true if the token is blacklisted, else false
      */
     public boolean isTokenBlacklisted(String token) {
-        return blacklistedTokens.contains(token);
+        return blacklistedTokens.contains(validateToken(token));
     }
+
+
+
+
+
+    /**
+     * This method validates the token and returns the user object.
+     *
+     * @param token JWT that needs to be validated
+     *
+     * @return the validated token
+     */
+    private String validateToken(String token)
+    {
+        if(token == null || token.length() == 0 || token.matches("(?i)null")) {
+            throw new InvalidCredentialsException("Invalid token");
+        }
+        return token;
+    }
+
+
+
 }
