@@ -2,6 +2,7 @@ package uk.ac.ncl.tastetracker.service.implementation;
 
 import uk.ac.ncl.tastetracker.dto.RestaurantDTO;
 import uk.ac.ncl.tastetracker.entity.Restaurant;
+import uk.ac.ncl.tastetracker.exception.custom.InvalidInputException;
 import uk.ac.ncl.tastetracker.exception.custom.ResourceNotFoundException;
 import uk.ac.ncl.tastetracker.dto.dtomapper.RestaurantDTOMapper;
 import uk.ac.ncl.tastetracker.repository.RestaurantRepository;
@@ -12,7 +13,6 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -30,23 +30,33 @@ import java.util.stream.Collectors;
  * This class implements the RestaurantService interface and provides methods to interact with the RestaurantRepository
  * to retrieve restaurant information.
  *
- * @author CSC8019_Team 15
- * @since 2023-05-01
+ * @author Surendhar Chandran Jayapal
+ * @version 1.5 (06-05-2023)
+ * @since 1.0 (17-04-2023)
  */
 @Service
 public class RestaurantServiceImplementation implements RestaurantService {
 
+    /**
+     * RestaurantRepository that performs database related operations.
+     */
     private final RestaurantRepository restaurantRepository;
+
+    /**
+     * RestaurantDTOMapper to map Restaurant objects to RestaurantDTO
+     */
     private final RestaurantDTOMapper restaurantDTOMapper;
 
     /**
-     * Represents the Google Maps API key to fetch the approximate walking time
+     * Represents the Google Maps API key to fetch the approximate walking time.
+     * The value is fetched from application.properties file.
      */
     @Value("${api.key}")
     private String apiKey;
 
     /**
-     * Represents the Google Maps API URL key to fetch the approximate walking time
+     * Represents the Google Maps API URL key to fetch the approximate walking time.
+     * The value is fetched from application.properties file.
      */
     @Value("${google.maps.api.url}")
     private String googleMapsURL;
@@ -59,6 +69,7 @@ public class RestaurantServiceImplementation implements RestaurantService {
      *
      * @param restaurantRepository - an object of type RestaurantRepository that provides CRUD functionality for the Restaurant entity
      * @param restaurantDTOMapper - an object of type RestaurantDTOMapper that maps between Restaurant and RestaurantDTO objects
+     *
      */
     @Autowired
     public RestaurantServiceImplementation(RestaurantRepository restaurantRepository, RestaurantDTOMapper restaurantDTOMapper) {
@@ -68,33 +79,6 @@ public class RestaurantServiceImplementation implements RestaurantService {
 
 
 
-    /**
-     * This method retrieves a single Restaurant object based on the restaurant ID provided
-     * and maps it to RestaurantDTO.
-     *
-     * @param restaurantId - the ID of the restaurant to retrieved
-     *
-     * @return a RestaurantDTO object representing the restaurant with the provided ID
-     *
-     * @throws ResourceNotFoundException if no restaurant is found with the provided ID
-     */
-    @Override
-    public RestaurantDTO getRestaurantById(Long restaurantId) {
-        Restaurant restaurant = restaurantRepository.findByRestaurantID(restaurantId);
-
-        if(restaurant == null) {
-            throw new ResourceNotFoundException("Restaurant not found");
-        }
-
-        restaurant.setAverageCost(restaurant.averageCostOfADish());
-        restaurant.setOperatingHoursOfTheDay(restaurant.operatingHoursOfTheDay());
-        restaurant.setImagesLink(restaurant.imagesLink());
-        restaurant.setOperatingHoursOfTheWeek(restaurant.operatingHoursOfTheWeek());
-
-        return restaurantDTOMapper.apply(restaurant);
-    }
-
-
 
 
     /**
@@ -106,36 +90,42 @@ public class RestaurantServiceImplementation implements RestaurantService {
      * @return a RestaurantDTO object representing the restaurant with the provided ID
      *
      * @throws ResourceNotFoundException if no restaurant is found with the provided ID
+     * @throws InvalidInputException if the latitude, longitude or the restaurantId is invalid
      */
     @Override
-    public RestaurantDTO getRestaurantByIdWithUserLocation(Long restaurantId, Double latitude, Double longitude) {
+    public RestaurantDTO getRestaurantById(Long restaurantId, Double latitude, Double longitude) {
+
+        if (restaurantId == null || Double.isNaN(restaurantId.doubleValue()) ) {
+            throw new InvalidInputException("Invalid Restaurant ID");
+        }
+
+        //Validates location
+        validateLocation(latitude, longitude);
+
         Restaurant restaurant = restaurantRepository.findByRestaurantID(restaurantId);
 
         if(restaurant == null) {
             throw new ResourceNotFoundException("Restaurant not found");
         }
+
 
         double restaurantLatitude = restaurant.getLatitude();
         double restaurantLongitude = restaurant.getLongitude();
         double distance = restaurant.distanceFromUser(latitude, longitude, restaurantLatitude, restaurantLongitude);
 
-        //Sets the distance from the user
         restaurant.setDistanceFromUser(distance);
-        //Sets average cost of a main course dish
         restaurant.setAverageCost(restaurant.averageCostOfADish());
-        //Sets operating hours of the day
         restaurant.setOperatingHoursOfTheDay(restaurant.operatingHoursOfTheDay());
-        //Sets the approximate walking time from the user
         restaurant.setApproximateWalkingTimeFromUser(walkingTimeFromUser(latitude, longitude, restaurantLatitude, restaurantLongitude));
-        //Sets restaurant's images link
         restaurant.setImagesLink(restaurant.imagesLink());
-        //Sets restaurant's operating times
         restaurant.setOperatingHoursOfTheWeek(restaurant.operatingHoursOfTheWeek());
 
 
         //Maps Restaurant to RestaurantDTO
         return restaurantDTOMapper.apply(restaurant);
     }
+
+
 
 
 
@@ -147,9 +137,14 @@ public class RestaurantServiceImplementation implements RestaurantService {
      * @param longitude - longitude of the user's location
      *
      * @return list of Restaurant DTO objects representing the open restaurants within one-mile radius.
+     *
+     * @throws InvalidInputException if the latitude and longitude passed are invalid.
      */
     @Override
     public List<RestaurantDTO> getRestaurantsByLocation(Double latitude, Double longitude) {
+
+        validateLocation(latitude, longitude);
+
         final double ONE_MILE_IN_METERS = 1609.34; // 1 mile = 1609.34 meters
 
         List<Restaurant> nearbyRestaurants = new ArrayList<>();
@@ -165,17 +160,11 @@ public class RestaurantServiceImplementation implements RestaurantService {
             //Checks if the restaurant is within one-mile radius and open and adds it to the list
             if (distance <= ONE_MILE_IN_METERS && isOpen) {
 
-                //Sets the distance from the user
                 restaurant.setDistanceFromUser(distance);
-                //Sets average cost of a main course dish
                 restaurant.setAverageCost(restaurant.averageCostOfADish());
-                //Sets operating hours of the day
                 restaurant.setOperatingHoursOfTheDay(restaurant.operatingHoursOfTheDay());
-                //Sets the approximate walking time from the user
                 restaurant.setApproximateWalkingTimeFromUser(walkingTimeFromUser(latitude, longitude, restaurantLatitude, restaurantLongitude));
-                //Sets restaurant's images link
                 restaurant.setImagesLink(restaurant.imagesLink());
-                //Sets restaurant's operating times
                 restaurant.setOperatingHoursOfTheWeek(restaurant.operatingHoursOfTheWeek());
 
                 nearbyRestaurants.add(restaurant);
@@ -183,11 +172,12 @@ public class RestaurantServiceImplementation implements RestaurantService {
         }
 
 
-        //Maps Restaurant to Restaurant DTO
+        //Maps List of Restaurants to a List of Restaurant DTO
         return nearbyRestaurants.stream()
                 .map(restaurantDTOMapper)
                 .collect(Collectors.toList());
     }
+
 
 
 
@@ -200,9 +190,19 @@ public class RestaurantServiceImplementation implements RestaurantService {
      * @param longitude1 - longitude of the first point
      * @param latitude2 - latitude of the second point
      * @param longitude2 - longitude of the second point
+     *
      * @return approximate walking time between two locations
+     *
+     * @throws InvalidInputException if the latitudes or longitudes passed are invalid.
+     *                               if the url is invalid, if the API key is invalid or missing
+     * @throws IllegalArgumentException if there is any connectivity problem
+     * @throws JSONException if there is an error in parsing JSON response
      */
     public Double walkingTimeFromUser(double latitude1, double longitude1, double latitude2, double longitude2) {
+
+        validateLocation(latitude1, longitude1);
+        validateLocation(latitude2, longitude2);
+
         String urlString = googleMapsURL+ "?origin=" + latitude1 + "," + longitude1 +
                 "&destination=" + latitude2 + "," + longitude2 +
                 "&mode=walking&key=" + apiKey;
@@ -223,6 +223,7 @@ public class RestaurantServiceImplementation implements RestaurantService {
             }
             in.close();
 
+
             //Converting the response data to a JSONObject, then extracting the route from it.
             JSONObject json = new JSONObject(response.toString());
             System.out.println(json);
@@ -232,6 +233,7 @@ public class RestaurantServiceImplementation implements RestaurantService {
             JSONObject leg = legs.getJSONObject(0);
             JSONObject duration = leg.getJSONObject("duration");
 
+
             DecimalFormat df = new DecimalFormat("#");
             df.setRoundingMode(RoundingMode.DOWN);
 
@@ -239,19 +241,40 @@ public class RestaurantServiceImplementation implements RestaurantService {
 
             return Double.parseDouble(df.format(time));
         }
+
         catch (MalformedURLException e) {
-            throw new IllegalArgumentException("Invalid URL"); // indicate an invalid URL
+            throw new InvalidInputException("Invalid URL"); // indicate an invalid URL
         } catch (IOException e) {
             throw new IllegalArgumentException("Unexpected error in the connection"); // indicate an error in the connection or reading from the stream
         } catch (JSONException e) {
-            throw new IllegalArgumentException("Unexpected error in the response"); // indicate an error in parsing the JSON response
+            throw new JSONException("Unexpected error in the response"); // indicate an error in parsing the JSON response
         } catch (NullPointerException e) {
-            throw new IllegalArgumentException("Please check the API key and the URL"); // indicate a missing API key or Google Maps URL
+            throw new InvalidInputException("Please check the API key and the URL"); // indicate a missing API key or Google Maps URL
         }
 
     }
 
 
+
+
+
+    /**
+     * This method validates if the location is valid or not
+     *
+     * @param latitude latitude of the location
+     * @param longitude longitude of the location
+     *
+     * @throws InvalidInputException if the latitude and longitude passed are invalid
+     */
+    private void validateLocation(Double latitude, Double longitude) {
+        if (latitude == null || Double.isNaN(latitude) ) {
+            throw new InvalidInputException("Invalid latitude");
+        }
+        else if (longitude == null || Double.isNaN(longitude) ) {
+            throw new InvalidInputException("Invalid longitude");
+        }
+
+    }
 
 
 }

@@ -18,7 +18,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
 import java.util.Arrays;
 
 
@@ -26,8 +25,9 @@ import java.util.Arrays;
   * The SecurityConfig class is responsible for configuring Spring Security to authenticate and authorize incoming requests based on the defined rules.
   * It defines the user details service, password encoder, authentication provider, and security filter chain.
   *
-  * @author CSC8019_Team 15
-  * @since 2023-05-01
+  * @author Surendhar Chandran Jayapal
+ * @version 1.5 (Date - 06-05-2023)
+ * @since 1.0 (Date - 17-04-2023)
   */
 @Configuration
 @EnableWebSecurity
@@ -52,13 +52,13 @@ public class SecurityConfig {
 
 
     /**
-     * Creates a new instance of UserDetailsServiceImplementation using the UserRepository instance.
+     * Creates a new instance of CustomUserDetailsService using the UserRepository instance.
      *
-     * @return The UserDetailsServiceImplementation instance.
+     * @return The CustomUserDetailsService instance.
      */
     @Bean
     public UserDetailsService userDetailsService(){
-        return new UserDetailsServiceImplementation(userRepository);
+        return new CustomUserDetailsService(userRepository);
     }
 
 
@@ -109,7 +109,7 @@ public class SecurityConfig {
 
 
     /**
-     * Creates a new instance of DaoAuthenticationProvider used to authenticate users with the UserDetailsServiceImplementation instance.
+     * Creates a new instance of DaoAuthenticationProvider used to authenticate users with the CustomUserDetailsService instance.
      *
      * @return The DaoAuthenticationProvider instance.
      */
@@ -123,8 +123,14 @@ public class SecurityConfig {
 
 
 
-     @Bean
-     CorsConfigurationSource corsConfigurationSource() {
+    /**
+     * Creates a new instance of CorsConfigurationSource that enables the server to connect with the client
+     * and make API calls.
+     *
+     * @return CorsConfigurationSource instance
+     */
+    @Bean
+     public CorsConfigurationSource corsConfigurationSource() {
          CorsConfiguration configuration = new CorsConfiguration();
          configuration.setAllowedOrigins(Arrays.asList("*"));
          configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE","OPTIONS"));

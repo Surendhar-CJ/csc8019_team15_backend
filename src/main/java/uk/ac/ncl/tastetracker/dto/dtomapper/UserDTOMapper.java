@@ -8,8 +8,9 @@ import java.util.function.Function;
 /**
  * This class is used to map a User object to a USerDTO object by implementing Function interface.
  *
- * @author CSC8019_Team 15
- * @since 2023-05-01
+ * @author Surendhar Chandran Jayapal
+ * @version 1.5 (06-05-2023)
+ * @since 1.1 (22-04-2023)
  */
 @Component
 public final class UserDTOMapper implements Function<User, UserDTO> {

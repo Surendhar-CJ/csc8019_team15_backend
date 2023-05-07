@@ -1,15 +1,16 @@
 package uk.ac.ncl.tastetracker.service;
 
 import uk.ac.ncl.tastetracker.dto.ReviewDTO;
-import uk.ac.ncl.tastetracker.utils.ReviewSubmit;
+import uk.ac.ncl.tastetracker.requestBody.ReviewSubmit;
 import java.util.List;
 
 
 /**
  * This interface defines methods for accessing restaurant data.
  *
- * @author CSC8019_Team 15
- * @since 2023-05-01
+ * @author Surendhar Chandran Jayapal
+ * @version 1.5 (06-05-2023)
+ * @since 1.1 (22-04-2023)
  */
 public interface ReviewService {
 

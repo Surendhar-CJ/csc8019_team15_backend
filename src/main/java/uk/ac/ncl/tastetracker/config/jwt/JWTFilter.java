@@ -1,7 +1,6 @@
 package uk.ac.ncl.tastetracker.config.jwt;
 
-import uk.ac.ncl.tastetracker.config.UserDetailsServiceImplementation;
-import uk.ac.ncl.tastetracker.exception.custom.InvalidTokenException;
+import uk.ac.ncl.tastetracker.config.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,23 +12,37 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-
+import uk.ac.ncl.tastetracker.exception.custom.InvalidCredentialsException;
 import java.io.IOException;
 
 
+
 /**
- * A filter that intercepts incoming HTTP requests and processes any JWT tokens found in their
+ * A filter that intercepts incoming HTTP requests and processes any JWT found in their
  * Authorization header. If a valid token is found, it is used to authenticate the user and set
  * their authentication context in the SecurityContextHolder.
  *
- * @author CSC8019_Team 15
- * @since 2023-05-01
+ * @author Surendhar Chandran Jayapal
+ * @version 1.5 (Date - 06-05-2023)
+ * @since 1.3 (Date - 28-04-2023)
  */
 @Component
 public class JWTFilter extends OncePerRequestFilter {
 
+
+    /**
+     * Service for JWT operations
+     */
     private final JWTService jwtService;
-    private final UserDetailsServiceImplementation userDetailsService;
+
+    /**
+     * Service for retrieving user details
+     */
+    private final CustomUserDetailsService userDetailsService;
+
+    /**
+     * Token blacklist for invalidating tokens
+     */
     private final TokenBlacklist tokenBlacklist;
 
 
@@ -38,14 +51,16 @@ public class JWTFilter extends OncePerRequestFilter {
      * Constructs a new JWTFilter with the specified dependencies.
      *
      * @param jwtService the JWTService to use for token validation and generation
-     * @param userDetailsService the UserDetailsServiceImplementation to use for user authentication
+     * @param userDetailsService the CustomUserDetailsService to use for user authentication
      */
     @Autowired
-    public JWTFilter(JWTService jwtService, UserDetailsServiceImplementation userDetailsService, TokenBlacklist tokenBlacklist) {
+    public JWTFilter(JWTService jwtService, CustomUserDetailsService userDetailsService, TokenBlacklist tokenBlacklist) {
         this.jwtService = jwtService;
         this.userDetailsService = userDetailsService;
         this.tokenBlacklist = tokenBlacklist;
     }
+
+
 
 
 
@@ -74,7 +89,7 @@ public class JWTFilter extends OncePerRequestFilter {
 
         //Checks if the token is blacklisted before authenticating.
         if (token != null && tokenBlacklist.isTokenBlacklisted(token)) {
-            throw new InvalidTokenException("Token blacklisted");
+            throw new InvalidCredentialsException("Token blacklisted");
         }
 
         if(username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -89,6 +104,7 @@ public class JWTFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(request, response);
     }
+
 
 
 }

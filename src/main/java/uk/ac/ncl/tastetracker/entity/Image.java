@@ -10,14 +10,14 @@ import lombok.NoArgsConstructor;
 
 
 /**
- * This class represents an Image entity.
- * It uses Lombok annotations to generate getters, setters, constructors, equals/hashcode and toString methods at compile-time.
+ * Image class represents the Image entity.An instance of the class can be represented by a field in the database.
+ * This class uses Lombok annotations to generate getters, setters, no argument constructor, all argument constructor, equals/hashcode and toString methods.
+ * NOTE: Here, Spring Data JPA/Hibernate is used only to fetch results from the database(so table mapping is required)
+ *       and not for creating the schema (so, constraints are not mentioned in the fields explicitly).
  *
- * NOTE: Here, Spring Data JPA/Hibernate is used only to fetch results from the database(so table mapping is required) and not creating a schema.
- *       This has been disabled in application.properties file.
- *
- * @author CSC8019_Team 15
- * @since 2023-05-01
+ * @author Surendhar Chandran Jayapal
+ * @version 1.5 (06-05-2023)
+ * @since 1.4 (01-05-2023)
  */
 @Data
 @NoArgsConstructor
@@ -26,16 +26,32 @@ import lombok.NoArgsConstructor;
 @Table(name = "image")
 public class Image {
 
+
+    /**
+     * The unique identifier of the image.
+     * The column name corresponds to the column name "id" in the image table in the database.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
+    /**
+     * The link to the image file
+     * The column name corresponds to the column name "image_link" in the image table in the database.
+     */
     @Column(name = "image_link")
     private String imageLink;
 
+    /**
+     * The restaurant that the image is associated with.
+     * The column name corresponds to the column name "restaurant_id" in the image table in the database.
+     * JsonIgnore ignores the restaurant information while parsing.
+     */
     @ManyToOne
     @JoinColumn(name = "restaurant_id")
     @JsonIgnore
     private Restaurant restaurant;
+
+
 }

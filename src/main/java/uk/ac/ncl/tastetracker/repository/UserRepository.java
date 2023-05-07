@@ -8,8 +8,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * The UserRepository interface extends JpaRepository to perform basic CRUD operations and provides additional methods
  * to retrieve User entities from the database.
  *
- * @author CSC8019_Team 15
- * @since 2023-05-01
+ * @author Surendhar Chandran Jayapal
+ * @version 1.5 (06-05-2023)
+ * @since 1.1 (22-04-2023)
  */
 public interface UserRepository extends JpaRepository<User, Long> {
 

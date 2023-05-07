@@ -5,18 +5,18 @@ import uk.ac.ncl.tastetracker.dto.ReviewDTO;
 import uk.ac.ncl.tastetracker.entity.Restaurant;
 import uk.ac.ncl.tastetracker.entity.Review;
 import uk.ac.ncl.tastetracker.entity.User;
-import uk.ac.ncl.tastetracker.exception.custom.InvalidTokenException;
+import uk.ac.ncl.tastetracker.exception.custom.InvalidCredentialsException;
+import uk.ac.ncl.tastetracker.exception.custom.InvalidInputException;
 import uk.ac.ncl.tastetracker.exception.custom.ResourceExistsException;
 import uk.ac.ncl.tastetracker.exception.custom.ResourceNotFoundException;
 import uk.ac.ncl.tastetracker.dto.dtomapper.ReviewDTOMapper;
-import uk.ac.ncl.tastetracker.utils.ReviewSubmit;
+import uk.ac.ncl.tastetracker.requestBody.ReviewSubmit;
 import uk.ac.ncl.tastetracker.repository.RestaurantRepository;
 import uk.ac.ncl.tastetracker.repository.ReviewRepository;
 import uk.ac.ncl.tastetracker.repository.UserRepository;
 import uk.ac.ncl.tastetracker.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.List;
@@ -27,16 +27,36 @@ import java.util.stream.Collectors;
 /**
  * This class implements the ReviewService interface that provides methods to create, read, update, and delete restaurant reviews.
  *
- * @author CSC8019_Team 15
- * @since 2023-05-01
+ * @author Surendhar Chandran Jayapal
+ * @version 1.5 (06-05-2023)
+ * @since 1.1 (22-04-2023)
  */
 @Service
 public class ReviewServiceImplementation  implements ReviewService {
 
+    /**
+     * Repository interface for Restaurant entity to handle database operations.
+     */
     private final ReviewRepository reviewRepository;
+
+    /**
+     * Repository interface for Restaurant entity to handle database operations.
+     */
     private final RestaurantRepository restaurantRepository;
+
+    /**
+     * Repository interface for User entity to handle database operations.
+     */
     private final UserRepository userRepository;
+
+    /**
+     * The ReviewDTOMapper to map Review entities to DTOs.
+     */
     private final ReviewDTOMapper reviewDTOMapper;
+
+    /**
+     * Service class to handle JWT-related operations.
+     */
     private final JWTService jwtService;
 
 
@@ -68,23 +88,26 @@ public class ReviewServiceImplementation  implements ReviewService {
      *
      * @param reviewSubmit - review submission DTO containing the review details
      *
-     *
-     * @throws NullPointerException if reviewSubmit is null
      * @throws ResourceNotFoundException if the restaurant or user associated with the review do not exist
-     * @throws InvalidTokenException if the token is expired or invalid.
+     * @throws InvalidCredentialsException if the token is expired or invalid.
      */
     @Override
     public ReviewDTO createReview(Long restaurantId, ReviewSubmit reviewSubmit) {
+
+        if (restaurantId == null || Double.isNaN(restaurantId.doubleValue()) ) {
+            throw new InvalidInputException("Invalid Restaurant ID");
+        }
 
         //Checks if the restaurantId is valid
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Restaurant not found"));
 
-        String token = reviewSubmit.getToken();
-        //Validates the token and returns the user object
-        User user = validateToken(token);
 
-        //Check if the user has already submitted a review for the restaurant
+        String token = reviewSubmit.getToken();
+        User user = validateToken(token);
+        validateReview(reviewSubmit.getRating(), reviewSubmit.getComment());
+
+
         Review userReview = reviewRepository.findByUserAndRestaurant(user, restaurant);
         if (userReview != null) {
             throw new ResourceExistsException("You have submitted a review already");
@@ -118,6 +141,12 @@ public class ReviewServiceImplementation  implements ReviewService {
      */
     @Override
     public List<ReviewDTO> getAllReviews(Long restaurantId) {
+
+        //To check if the restaurantId is null or not a number
+        if (restaurantId == null || Double.isNaN(restaurantId.doubleValue()) ) {
+            throw new InvalidInputException("Invalid Restaurant ID");
+        }
+
         Restaurant restaurant = restaurantRepository.findByRestaurantID(restaurantId);
 
         if(restaurant == null) {
@@ -162,6 +191,7 @@ public class ReviewServiceImplementation  implements ReviewService {
 
 
 
+
     /**
      * This method sets the updated overall rating of the restaurant
      *
@@ -174,16 +204,21 @@ public class ReviewServiceImplementation  implements ReviewService {
 
 
 
+
     /**
      * This method validates the token and returns the user object.
      *
-     * @param token JWT
+     * @param token JWT that needs to be validated
+     *
      * @return user object
      */
     private User validateToken(String token)
     {
-        String username = jwtService.getUsernameFromToken(token);
+        if(token == null || token.length() <= 0 || token.matches("(?i)null")) {
+            throw new InvalidInputException("Invalid token");
+        }
 
+        String username = jwtService.getUsernameFromToken(token);
         User user = userRepository.findByUsername(username);
 
         if(user == null) {
@@ -195,12 +230,36 @@ public class ReviewServiceImplementation  implements ReviewService {
                 return user;
             }
             else {
-                throw new InvalidTokenException("Token does not belong to the user");
+                throw new InvalidCredentialsException("Token does not belong to the user");
             }
-        } else {
-            throw new InvalidTokenException("Token expired");
+        }
+        else {
+            throw new InvalidCredentialsException("Token expired");
         }
     }
 
+
+
+
+    /**
+     * This method validates the rating and comment of the review posted
+     *
+     * @param rating rating of the restaurant reviewed
+     * @param comment comments in the review.
+     *
+     * @throws InvalidInputException if the comment or rating is invalid and not as per the allowed requirements
+     */
+    private void validateReview(Double rating, String comment) {
+        if (rating <= 0.5 || rating >= 5) {
+            throw new InvalidInputException("Rating should be from 0.5 to 5");
+        } else if (rating.isInfinite() || rating.isNaN()) {
+            throw new InvalidInputException("Invalid rating");
+        }
+
+        if (comment == null || comment.matches("(?i)null")) {
+            throw new InvalidInputException("Invalid comment");
+        }
+
+    }
 
 }

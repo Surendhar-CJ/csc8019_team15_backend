@@ -14,14 +14,14 @@ import java.util.List;
 
 
 /**
- * This class represents a Restaurant entity.
- * It uses Lombok annotations to generate getters, setters, constructors, equals/hashcode and toString methods at compile-time.
+ * Restaurant class represents the Restaurant entity. An instance of the class can be represented by a field in the database.
+ * This class uses Lombok annotations to generate getters, setters, no argument constructor, all argument constructor, equals/hashcode and toString methods.
+ * NOTE: Here, Spring Data JPA/Hibernate is used only to fetch results from the database(so table mapping is required)
+ *       and not for creating the schema (so, constraints are not mentioned in the fields explicitly)
  *
- * NOTE: Here, Spring Data JPA/Hibernate is used ONLY to fetch results from the database(so table mapping is required) and not creating a schema
- *       This has been disabled in application.properties file.
- *
- * @author CSC8019_Team 15
- * @since 2023-05-01
+ * @author Surendhar Chandran Jayapal
+ * @version 1.5 (06-05-2023)
+ * @since 1.0 (17-04-2023)
  */
 @Data
 @NoArgsConstructor
@@ -30,71 +30,140 @@ import java.util.List;
 @Table(name = "restaurant")
 public class  Restaurant {
 
+    /**
+     * The unique identifier of the restaurant.
+     * The column name corresponds to the column name "id" in the restaurant table in the database.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long restaurantID;
 
+    /**
+     * The name of the restaurant
+     * The column name corresponds to the column name "name" in the restaurant table in the database.
+     */
     @Column(name = "name")
     private String name;
 
+    /**
+     * The address of the restaurant
+     * The column name corresponds to the column name "address" in the restaurant table in the database.
+     */
     @Column(name = "address")
     private String address;
 
+    /**
+     * The phone number of the restaurant
+     * The column name corresponds to the column name "phone_number" in the restaurant table in the database.
+     */
     @Column(name = "phone_number")
     public String phoneNumber;
 
+    /**
+     * The latitude of the restaurant's location
+     * The column name corresponds to the column name "latitude" in the restaurant table in the database.
+     */
     @Column(name = "latitude")
     private Double latitude;
 
+    /**
+     * The longitude of the restaurant's location
+     * The column name corresponds to the column name "longitude" in the restaurant table in the database.
+     */
     @Column(name = "longitude")
     private Double longitude;
 
+    /**
+     * The overall rating of the restaurant
+     * The column name corresponds to the column name "rating" in the restaurant table in the database.
+     */
     @Column(name = "rating")
     private Double overallRating;
 
+    /**
+     * The URL link to the menu of the restaurant.
+     * The column name corresponds to the column name "menu_link" in the restaurant table in the database.
+     */
     @Column(name = "menu_link")
     private String menuLink;
 
+    /**
+     * The website URL link of the restaurant.
+     * The column name corresponds to the column name "website_link" in the restaurant table in the database.
+     */
     @Column(name = "website_link")
     private String websiteLink;
 
-
+    /**
+     * The cuisine of the restaurant.
+     * The column name corresponds to the column name "cuisine_id" in the restaurant table in the database.
+     */
+    @ManyToOne
+    @JoinColumn(name = "cuisine_id")
+    private Cuisine cuisine;
 
     /**
+     * The average cost of a meal at the restaurant.
      * "@Transient" represents that it is not part of the database table column of the restaurant entity.
      */
     @Transient
     private Double averageCost;
 
+    /**
+     *The distance of the restaurant from the user's location.
+     * "@Transient" represents that it is not part of the database table column of the restaurant entity.
+     */
     @Transient
     private Double distanceFromUser;
 
+    /**
+     * The opening and closing hours of the restaurant for the current day.
+     * "@Transient" represents that it is not part of the database table column of the restaurant entity.
+     */
     @Transient
     private String operatingHoursOfTheDay;
 
+    /**
+     * The approximate walking time from the user's location to the restaurant.
+     * "@Transient" represents that it is not part of the database table column of the restaurant entity.
+     */
     @Transient
     private Double approximateWalkingTimeFromUser;
 
+    /**
+     * The opening and closing hours of the restaurant for each day of the week.
+     * "@Transient" represents that it is not part of the database table column of the restaurant entity.
+     */
     @Transient
     private List<String> operatingHoursOfTheWeek;
 
+    /**
+     * The image URL links of the restaurant.
+     * "@Transient" represents that it is not part of the database table column of the restaurant entity
+     */
     @Transient
     private List<String> imagesLink;
 
 
-
-
-    @ManyToOne
-    @JoinColumn(name = "cuisine_id")
-    private Cuisine cuisine;
-
+    /**
+     *  Represents the reviews of the restaurant.
+     * This field is mapped to the "review" table in the database, hence annotated with "@OneToMany".
+     */
     @OneToMany(mappedBy = "restaurant")
     private List<Review> reviews;
 
+    /**
+     * Represents the images of the restaurant.
+     * This field is mapped to the "image" table in the database, hence annotated with "@OneToMany".
+     */
     @OneToMany(mappedBy = "restaurant")
     private List<Image> images;
 
+    /**
+     * Represents the operating hours of the restaurant.
+     * This field is mapped to the "restaurant_operation_hour" table in the database, hence annotated with "@ManyToMany".
+     */
     @ManyToMany
     @JoinTable(
             name = "restaurant_operation_hour",
@@ -103,6 +172,10 @@ public class  Restaurant {
     )
     private List<OperationHour> operationHours;
 
+    /**
+     * Represents the operating hours of the restaurant.
+     * This field is mapped to the "restaurant_menu" table in the database, hence annotated with "@OneToMany".
+     */
     @ManyToMany
     @JoinTable(
             name = "restaurant_menu",
@@ -115,25 +188,26 @@ public class  Restaurant {
 
 
 
-
-
     /**
-     * This method checks if the restaurant is open.
+     * This method checks if the restaurant is open by validating against the operation hours of the restaurant.
      *
      * @return true if the restaurant is open, else false.
      */
     public Boolean isOpen() {
         LocalTime currentTime = LocalTime.now();
-        int currentDayOfWeek = LocalDateTime.now().getDayOfWeek().getValue(); // get current day of week
+        // get current day of week
+        int currentDayOfWeek = LocalDateTime.now().getDayOfWeek().getValue();
 
         List<OperationHour> operationHours = this.getOperationHours();
 
         for (OperationHour hours : operationHours) {
-            if (DayOfWeek.valueOf(hours.getDayOfWeek().toUpperCase()).getValue() == currentDayOfWeek) { // if the restaurant is open on the current day of week
+            // if the restaurant is open on the current day of week
+            if (DayOfWeek.valueOf(hours.getDayOfWeek().toUpperCase()).getValue() == currentDayOfWeek) {
                 LocalTime openingTime = LocalTime.parse(hours.getOpeningTime());
                 LocalTime closingTime = LocalTime.parse(hours.getClosingTime());
 
-                return !currentTime.isBefore(openingTime) && !currentTime.isAfter(closingTime); // return whether the current time is between opening and closing time
+                // return whether the current time is between opening and closing time
+                return !currentTime.isBefore(openingTime) && !currentTime.isAfter(closingTime);
             }
         }
         return false;
@@ -144,7 +218,7 @@ public class  Restaurant {
 
 
     /**
-     * Calculates the average cost of a main course dish in the menu items of a restaurant.
+     * Calculates the average cost of a main course dish from the menu items of the restaurant.
      *
      * @return The average cost of a main course dish.
      */
@@ -166,6 +240,7 @@ public class  Restaurant {
 
         return Double.parseDouble(df.format(averageCost/menuItems.size()));
     }
+
 
 
 
@@ -231,17 +306,17 @@ public class  Restaurant {
     }
 
 
+
+
     /**
      * This method returns restaurant's operating hours of the week
      *
      * @return restaurant's operating hours
      */
-
     public List<String> operatingHoursOfTheWeek()
     {
-        List<String> operatingHours = new ArrayList<>();
-        List<OperationHour> restaurantOperatingHours = new ArrayList<>();
-        restaurantOperatingHours = this.operationHours;
+        List<OperationHour> restaurantOperatingHours = this.operationHours;
+        List<String> operatingHours = new ArrayList<>(restaurantOperatingHours.size());
 
         for(OperationHour operationHour : restaurantOperatingHours)
         {
@@ -277,5 +352,7 @@ public class  Restaurant {
 
         return imagesLink;
     }
+
+
 
 }
