@@ -73,18 +73,11 @@ public class UserServiceImplementation implements UserService
     public void userRegister(User user) {
 
         //Validates user credentials against the requirements
-        validateUserInput(user);
+        User validatedUser = validateUserInput(user);
 
-        if (userRepository.findByUsername(user.getUsername()) != null) {
-            throw new ResourceExistsException("Username already taken");
-        }
+        validatedUser.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
 
-        if (userRepository.findByEmail(user.getEmail()) != null) {
-            throw new ResourceExistsException("User with the email address '" + user.getEmail() + "' already exists");
-        }
-
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
+        userRepository.save(validatedUser);
     }
 
 
@@ -124,19 +117,30 @@ public class UserServiceImplementation implements UserService
 
 
     /**
-     * This method validates user inputs against the required conditions
+     * This method validates user inputs against the required conditions.
      *
-     * @param user user object that contains username, email and password
+     * @param user user object that contains username, email and password.
      *
-     * @throws InvalidInputException if the email, username or password is not as per the requirements
+     * @return User  user object after validating.
+     *
+     * @throws InvalidInputException if the email, username or password is not as per the requirements.
      */
-    private void validateUserInput(User user) {
+    private User validateUserInput(User user) {
+
         if (user.getUsername() == null || user.getUsername().matches("(?i)null")) {
             throw new InvalidInputException("Invalid username");
         }
 
+        if (userRepository.findByUsername(user.getUsername()) != null) {
+            throw new ResourceExistsException("Username already taken");
+        }
+
         if (!user.getUsername().matches(RegexPattern.USERNAME_PATTERN)) {
             throw new InvalidInputException("Username should start with a letter and contain only letters, digits, underscores and dots, and must be at least 4 characters long");
+        }
+
+        if (userRepository.findByEmail(user.getEmail()) != null) {
+            throw new ResourceExistsException("User with the email address '" + user.getEmail() + "' already exists");
         }
 
         if (!user.getEmail().matches(RegexPattern.EMAIL_PATTERN)) {
@@ -144,12 +148,14 @@ public class UserServiceImplementation implements UserService
         }
 
         if (user.getPassword() == null || user.getPassword().matches("(?i)null")) {
-            throw new InvalidInputException("Invalid password");
+            throw new InvalidInputException("Invalid password, please try again");
         }
 
         if (!user.getPassword().matches(RegexPattern.PASSWORD_PATTERN)) {
             throw new InvalidInputException("Password should contain at least 8 characters including at least one number and one symbol from !@#$%^&*");
         }
+
+        return user;
     }
 
 

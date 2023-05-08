@@ -50,7 +50,7 @@ public class ReviewServiceImplementation  implements ReviewService {
     private final UserRepository userRepository;
 
     /**
-     * The ReviewDTOMapper to map Review entities to DTOs.
+     * The ReviewDTOMapper to map Review entities to  DTOs.
      */
     private final ReviewDTOMapper reviewDTOMapper;
 
