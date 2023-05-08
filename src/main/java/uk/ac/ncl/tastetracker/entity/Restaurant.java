@@ -118,13 +118,6 @@ public class  Restaurant {
     private Double distanceFromUser;
 
     /**
-     * The opening and closing hours of the restaurant for the current day.
-     * "@Transient" represents that it is not part of the database table column of the restaurant entity.
-     */
-    @Transient
-    private String operatingHoursOfTheDay;
-
-    /**
      * The approximate walking time from the user's location to the restaurant.
      * "@Transient" represents that it is not part of the database table column of the restaurant entity.
      */
@@ -173,7 +166,7 @@ public class  Restaurant {
     private List<OperationHour> operationHours;
 
     /**
-     * Represents the operating hours of the restaurant.
+     * Represents the menu items of the restaurant.
      * This field is mapped to the "restaurant_menu" table in the database, hence annotated with "@OneToMany".
      */
     @ManyToMany
@@ -223,7 +216,8 @@ public class  Restaurant {
      * @return The average cost of a main course dish.
      */
     public Double averageCostOfADish() {
-        List<Menu> menuItems = this.menuItems;
+
+        List<Menu> menuItems = this.getMenuItems();
 
         double averageCost = 0;
 
@@ -273,36 +267,6 @@ public class  Restaurant {
         df.setRoundingMode(RoundingMode.DOWN);
 
         return Double.parseDouble(df.format(distance));
-    }
-
-
-
-
-
-    /**
-     * This method returns the operating hours of the restaurant for the current day of the week.
-     *
-     * @return String representing the operating hours of the day in "HH:MM (opening time) - HH:MM (closing time)" format.
-     *         Empty string if there is no operation hours available for the restaurant.
-     *
-     */
-    public String operatingHoursOfTheDay() {
-        LocalTime currentTime = LocalTime.now();
-        int currentDayOfWeek = LocalDateTime.now().getDayOfWeek().getValue();
-
-        List<OperationHour> operationHours = this.getOperationHours();
-
-        for (OperationHour hours : operationHours) {
-            if (DayOfWeek.valueOf(hours.getDayOfWeek().toUpperCase()).getValue() == currentDayOfWeek) {
-                LocalTime openingTime = LocalTime.parse(hours.getOpeningTime());
-                LocalTime closingTime = LocalTime.parse(hours.getClosingTime());
-
-                return String.format("%s - %s", openingTime.format(DateTimeFormatter.ofPattern("HH:mm")), closingTime.format(DateTimeFormatter.ofPattern("HH:mm")));
-            }
-        }
-
-        //Returns an empty String if the restaurant doesn't have operating hours information
-        return "";
     }
 
 

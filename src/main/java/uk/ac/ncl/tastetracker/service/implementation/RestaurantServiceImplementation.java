@@ -115,7 +115,6 @@ public class RestaurantServiceImplementation implements RestaurantService {
 
         restaurant.setDistanceFromUser(distance);
         restaurant.setAverageCost(restaurant.averageCostOfADish());
-        restaurant.setOperatingHoursOfTheDay(restaurant.operatingHoursOfTheDay());
         restaurant.setApproximateWalkingTimeFromUser(walkingTimeFromUser(latitude, longitude, restaurantLatitude, restaurantLongitude));
         restaurant.setImagesLink(restaurant.imagesLink());
         restaurant.setOperatingHoursOfTheWeek(restaurant.operatingHoursOfTheWeek());
@@ -124,6 +123,7 @@ public class RestaurantServiceImplementation implements RestaurantService {
         //Maps Restaurant to RestaurantDTO
         return restaurantDTOMapper.apply(restaurant);
     }
+
 
 
 
@@ -162,7 +162,6 @@ public class RestaurantServiceImplementation implements RestaurantService {
 
                 restaurant.setDistanceFromUser(distance);
                 restaurant.setAverageCost(restaurant.averageCostOfADish());
-                restaurant.setOperatingHoursOfTheDay(restaurant.operatingHoursOfTheDay());
                 restaurant.setApproximateWalkingTimeFromUser(walkingTimeFromUser(latitude, longitude, restaurantLatitude, restaurantLongitude));
                 restaurant.setImagesLink(restaurant.imagesLink());
                 restaurant.setOperatingHoursOfTheWeek(restaurant.operatingHoursOfTheWeek());
@@ -267,11 +266,22 @@ public class RestaurantServiceImplementation implements RestaurantService {
      * @throws InvalidInputException if the latitude and longitude passed are invalid
      */
     private void validateLocation(Double latitude, Double longitude) {
-        if (latitude == null || Double.isNaN(latitude) ) {
+        if (latitude == null || Double.isNaN(latitude)) {
             throw new InvalidInputException("Invalid latitude");
         }
-        else if (longitude == null || Double.isNaN(longitude) ) {
+        else if (longitude == null || Double.isNaN(longitude)) {
             throw new InvalidInputException("Invalid longitude");
+        }
+        else if (latitude.toString().trim().isEmpty() || longitude.toString().trim().isEmpty()) {
+            throw new InvalidInputException("Latitude or longitude cannot be empty or blank");
+        }
+        else {
+            try {
+                double lat = Double.parseDouble(latitude.toString());
+                double lng = Double.parseDouble(longitude.toString());
+            } catch (NumberFormatException ex) {
+                throw new InvalidInputException("Invalid latitude or longitude");
+            }
         }
 
     }
