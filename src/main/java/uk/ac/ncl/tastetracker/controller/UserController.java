@@ -140,7 +140,6 @@ public class UserController {
      */
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(@RequestBody String token) {
-        System.out.println(token);
         tokenBlacklist.addTokenToBlacklist(token);
         return new ResponseEntity<>(HttpStatus.OK);
     }
