@@ -12,7 +12,6 @@ import uk.ac.ncl.tastetracker.dto.dtomapper.RestaurantDTOMapper;
 import uk.ac.ncl.tastetracker.entity.*;
 import uk.ac.ncl.tastetracker.exception.custom.InvalidInputException;
 import uk.ac.ncl.tastetracker.repository.RestaurantRepository;
-import uk.ac.ncl.tastetracker.service.RestaurantService;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -25,9 +24,6 @@ import static org.mockito.Mockito.when;
 
 /**
  * RestaurantServiceImplementationTest is used to test RestaurantServiceImplementation class.
- *
- * @author Surendhar Chandran Jayapal
- * @since 1.5 (06-05-2023)
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -113,7 +109,6 @@ public class RestaurantServiceImplementationTest {
         restaurant.setImagesLink(restaurant.imagesLink());
 
         RestaurantDTO expectedRestaurantDTO = restaurantDTOMapper.apply(restaurant);
-        System.out.println(expectedRestaurantDTO);
         when(restaurantRepository.findByRestaurantID(1L)).thenReturn(restaurant);
 
 
@@ -207,20 +202,176 @@ public class RestaurantServiceImplementationTest {
     }
 
 
-
+    /*
     @Test
     public void testGetRestaurantsByLocation()
     {
+        double userLatitude = 54.973372684718505;
+        double userLongitude = -1.6257900913904035;
 
+
+        //Creating a Restaurant object
+        Restaurant restaurant1 = new Restaurant();
+        restaurant1.setRestaurantID(2L);
+        restaurant1.setName("Five Guys");
+        restaurant1.setAddress("2/4 Northumberland St, Newcastle upon Tyne NE1 7DE");
+        restaurant1.setPhoneNumber("0191 261 5755");
+        restaurant1.setLatitude(54.9744764300842);
+        restaurant1.setLongitude(-1.61149876837645);
+        restaurant1.setOverallRating(Double.valueOf(4));
+        restaurant1.setMenuLink("https://fiveguys.co.uk/menu/?y_source=1_MTI0MzE1NzAtNzE1LWxvY2F0aW9uLm1lbnVfdXJs#tab-burgers");
+        restaurant1.setWebsiteLink("https://restaurants.fiveguys.co.uk/north-east/2/4-northumberland-st");
+        Cuisine cuisine1 = new Cuisine();
+        cuisine1.setName("American");
+        restaurant1.setCuisine(cuisine1);
+
+        List<Menu> menuList1 = new ArrayList<>();
+        menuList1.add(new Menu(1L, "Hamburger",8.65));
+        menuList1.add(new Menu(2L, "Cheeseburger",9.95));
+        menuList1.add(new Menu(3L, "Bacon Burger",10.45));
+        menuList1.add(new Menu(4L, "Bacon Cheeseburger",10.65));
+        menuList1.add(new Menu(5L, "Cheese Dog",7.35));
+        menuList1.add(new Menu(6L, "Bacon Dog",7.85));
+        menuList1.add(new Menu(7L, "Veggie Sandwich",5.5));
+
+        restaurant1.setMenuItems(menuList1);
+        restaurant1.setAverageCost(restaurant1.averageCostOfADish());
+
+        List<OperationHour> operationHours1 = new ArrayList<>();
+        operationHours1.add(new OperationHour(1L, "MONDAY", 	"11:00:00", 	"23:00:00"));
+        operationHours1.add(new OperationHour(2L, "TUESDAY",	"11:00:00",	"21:00:00"));
+        operationHours1.add(new OperationHour(3L, "WEDNESDAY","11:00:00","21:00:00"));
+        operationHours1.add(new OperationHour(4L, "THURSDAY","11:00:00", "23:59:59"));
+        operationHours1.add(new OperationHour(5L, "FRIDAY","09:00:00", "23:59:59"));
+        operationHours1.add(new OperationHour(6L, "SATURDAY","09:00:00", "23:59:59"));
+        operationHours1.add(new OperationHour(7L, "SUNDAY","11:00:00",	"23:00:00"));
+        restaurant1.setOperationHours(operationHours1);
+        restaurant1.setOperatingHoursOfTheWeek(restaurant1.operatingHoursOfTheWeek());
+
+
+
+
+        restaurant1.setDistanceFromUser(restaurant1.distanceFromUser(userLatitude, userLongitude, restaurant1.getLatitude(), restaurant1.getLongitude()));
+        restaurant1.setApproximateWalkingTimeFromUser(walkingTimeFromUserTest(userLatitude, userLongitude, restaurant1.getLatitude(), restaurant1.getLongitude()));
+
+        List<Image> imageList1 = new ArrayList<>();
+        imageList1.add(new Image(1L, "https://3.bp.blogspot.com/-LhnD8UlH7OA/V8GPoyarhYI/AAAAAAAAEhA/uur0DTQ1G8QEc9jYquJVT9tnPY_L4LwswCLcB/s1600/Interior.jpg", restaurant1));
+        imageList1.add(new Image(2L, "https://fiveguys.co.uk/app/uploads/2020/12/fiveguys-burgers-1024x683.jpg", restaurant1));
+        imageList1.add(new Image(3L, "https://4.bp.blogspot.com/-KeLK7SEAIM8/V8GPoBXERGI/AAAAAAAAEg4/bmQTia0RU8ssXkt6DqPpjAE00IeYUUV4ACLcB/s1600/Exterior.jpg", restaurant1));
+        restaurant1.setImages(imageList1);
+        restaurant1.setImagesLink(restaurant1.imagesLink());
+
+        RestaurantDTO RestaurantDTO1 = restaurantDTOMapper.apply(restaurant1);
+
+
+        //Creating a Restaurant object
+        Restaurant restaurant2 = new Restaurant();
+        restaurant2.setRestaurantID(2L);
+        restaurant2.setName("Kafenoeon");
+        restaurant2.setAddress("24, Stoddart Street, Newcastle upon Tyne NE1 7DE");
+        restaurant2.setPhoneNumber("0191 261 5755");
+        restaurant2.setLatitude(54.96934973360401);
+        restaurant2.setLongitude(-1.609098028164953);
+        restaurant2.setOverallRating(Double.valueOf(3.5));
+        restaurant2.setMenuLink("https://menu-kafenoeon.com");
+        restaurant2.setWebsiteLink("https://kafenoeon.com");
+        Cuisine cuisine2 = new Cuisine();
+        cuisine2.setName("Greek");
+        restaurant2.setCuisine(cuisine2);
+
+        List<Menu> menuList2 = new ArrayList<>();
+        menuList2.add(new Menu(1L, "Ribeye Steak",23.5));
+        menuList2.add(new Menu(2L, "Crispy Chicken Burger",15.5));
+        menuList2.add(new Menu(3L, "Plant Based Burger",15.5));
+        menuList2.add(new Menu(4L, "Panko Breaded Chicken",16.95));
+        menuList2.add(new Menu(5L, "Pan Seared Seabass",16.95));
+        menuList2.add(new Menu(6L, "Thai Red Vegetable Curry",14.95));
+        menuList2.add(new Menu(7L, "Chef''s Special Braised Pork Belly",13.8));
+        menuList2.add(new Menu(8L, "Chef''s Special Braised Pork Belly",13.8));
+
+        restaurant2.setMenuItems(menuList2);
+        restaurant2.setAverageCost(restaurant2.averageCostOfADish());
+
+        List<OperationHour> operationHours2 = new ArrayList<>();
+        operationHours2.add(new OperationHour(1L, "MONDAY", 	"11:00:00", 	"23:00:00"));
+        operationHours2.add(new OperationHour(2L, "TUESDAY",	"11:00:00",	"21:00:00"));
+        operationHours2.add(new OperationHour(3L, "WEDNESDAY","11:00:00","21:00:00"));
+        operationHours2.add(new OperationHour(4L, "THURSDAY","11:00:00", "23:59:59"));
+        operationHours2.add(new OperationHour(5L, "FRIDAY","09:00:00", "23:59:59"));
+        operationHours2.add(new OperationHour(6L, "SATURDAY","09:00:00", "23:59:59"));
+        operationHours2.add(new OperationHour(7L, "SUNDAY","11:00:00",	"23:00:00"));
+        restaurant2.setOperationHours(operationHours2);
+        restaurant2.setOperatingHoursOfTheWeek(restaurant2.operatingHoursOfTheWeek());
+
+
+
+        restaurant2.setDistanceFromUser(restaurant2.distanceFromUser(userLatitude, userLongitude, restaurant2.getLatitude(), restaurant2.getLongitude()));
+        restaurant2.setApproximateWalkingTimeFromUser(walkingTimeFromUserTest(userLatitude, userLongitude, restaurant2.getLatitude(), restaurant2.getLongitude()));
+
+        List<Image> imageList2 = new ArrayList<>();
+        imageList2.add(new Image(1L, "https://image2.jpg", restaurant2));
+        imageList2.add(new Image(2L, "https://image4.jpg", restaurant2));
+        imageList2.add(new Image(3L, "https://image4.jpg", restaurant2));
+        restaurant2.setImages(imageList2);
+        restaurant2.setImagesLink(restaurant2.imagesLink());
+
+        RestaurantDTO RestaurantDTO2 = restaurantDTOMapper.apply(restaurant2);
+
+
+        Restaurant restaurant3 = new Restaurant();
+        restaurant3.setRestaurantID(2L);
+        restaurant3.setName("Restaurant3");
+        restaurant3.setAddress("24, Stoddart Street, Newcastle upon Tyne NE1 7DE");
+        restaurant3.setPhoneNumber("0191 261 5755");
+        restaurant3.setLatitude(44.96934973360401);
+        restaurant3.setLongitude(-1.609098028164953);
+        restaurant3.setOverallRating(Double.valueOf(3));
+        restaurant3.setMenuLink("https://menu.com");
+        restaurant3.setWebsiteLink("https://restaurant3.com");
+        Cuisine cuisine3 = new Cuisine();
+        cuisine3.setName("Greek");
+        restaurant3.setCuisine(cuisine3);
+
+        List<Menu> menuList3 = new ArrayList<>();
+        menuList3.add(new Menu(1L, "Ribeye Steak",23.5));
+        menuList3.add(new Menu(2L, "Crispy Chicken Burger",15.5));
+        menuList3.add(new Menu(3L, "Plant Based Burger",15.5));
+        menuList3.add(new Menu(4L, "Panko Breaded Chicken",16.95));
+        menuList3.add(new Menu(5L, "Pan Seared Seabass",16.95));
+        menuList3.add(new Menu(6L, "Thai Red Vegetable Curry",14.95));
+        menuList3.add(new Menu(7L, "Chef''s Special Braised Pork Belly",13.8));
+        menuList3.add(new Menu(8L, "Chef''s Special Braised Pork Belly",13.8));
+
+        restaurant3.setMenuItems(menuList3);
+        restaurant3.setAverageCost(restaurant3.averageCostOfADish());
+
+        List<OperationHour> operationHours3 = new ArrayList<>();
+        operationHours3.add(new OperationHour(1L, "MONDAY", 	"11:00:00", 	"23:00:00"));
+        operationHours3.add(new OperationHour(2L, "TUESDAY",	"11:00:00",	"21:00:00"));
+        operationHours3.add(new OperationHour(3L, "WEDNESDAY","11:00:00","21:00:00"));
+        operationHours3.add(new OperationHour(4L, "THURSDAY","11:00:00", "23:59:59"));
+        operationHours3.add(new OperationHour(5L, "FRIDAY","09:00:00", "23:59:59"));
+        operationHours3.add(new OperationHour(6L, "SATURDAY","09:00:00", "23:59:59"));
+        operationHours3.add(new OperationHour(7L, "SUNDAY","11:00:00",	"23:00:00"));
+        restaurant3.setOperationHours(operationHours3);
+        restaurant3.setOperatingHoursOfTheWeek(restaurant3.operatingHoursOfTheWeek());
+
+        restaurant3.setDistanceFromUser(restaurant2.distanceFromUser(userLatitude, userLongitude, restaurant2.getLatitude(), restaurant2.getLongitude()));
+        restaurant3.setApproximateWalkingTimeFromUser(walkingTimeFromUserTest(userLatitude, userLongitude, restaurant2.getLatitude(), restaurant2.getLongitude()));
+
+        List<Image> imageList3 = new ArrayList<>();
+        imageList3.add(new Image(1L, "https://image2.jpg", restaurant3));
+        imageList3.add(new Image(2L, "https://image4.jpg", restaurant3));
+        imageList3.add(new Image(3L, "https://image4.jpg", restaurant3));
+        restaurant3.setImages(imageList3);
+        restaurant3.setImagesLink(restaurant3.imagesLink());
+
+
+        List<RestaurantDTO> expectedRestaurantDTOList = new ArrayList<>();
+
+        when(restaurantRepository.findByRestaurantID(1L)).thenReturn(restaurant2);
     }
-
-
-
-
-
-
-
-
+ */
 
 
 

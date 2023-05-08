@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 /**
  * This class implements the UserService interface to interact with UserRepository.
  *
- * @author Jiang He
+ * @author Surendhar Chandran Jayapal
  * @version 1.5 (06-05-2023)
  * @since 1.1 (22-04-2023)
  */
