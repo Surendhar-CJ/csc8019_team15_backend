@@ -134,12 +134,13 @@ public class UserController {
      *
      * @param token token to be blacklisted
      *
-     * @return ResponseEntity with a status code 200 OK.
+     * @return ResponseEntity with a status code : 200 OK.
      *
      * @throws InvalidCredentialsException if the token is invalid with an HTTP status code : 403 FORBIDDEN
      */
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(@RequestBody String token) {
+        System.out.println(token);
         tokenBlacklist.addTokenToBlacklist(token);
         return new ResponseEntity<>(HttpStatus.OK);
     }
