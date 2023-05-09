@@ -250,7 +250,7 @@ public class ReviewServiceImplementation  implements ReviewService {
      * @throws InvalidInputException if the comment or rating is invalid and not as per the allowed requirements
      */
     private void validateReview(Double rating, String comment) {
-        if (rating <= 0.5 || rating >= 5) {
+        if (rating < 0.5 || rating > 5) {
             throw new InvalidInputException("Rating should be from 0.5 to 5");
         } else if (rating.isInfinite() || rating.isNaN()) {
             throw new InvalidInputException("Invalid rating");
