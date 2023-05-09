@@ -225,7 +225,6 @@ public class RestaurantServiceImplementation implements RestaurantService {
 
             //Converting the response data to a JSONObject, then extracting the route from it.
             JSONObject json = new JSONObject(response.toString());
-            System.out.println(json);
             JSONArray routes = json.getJSONArray("routes");
             JSONObject route = routes.getJSONObject(0);
             JSONArray legs = route.getJSONArray("legs"); //
