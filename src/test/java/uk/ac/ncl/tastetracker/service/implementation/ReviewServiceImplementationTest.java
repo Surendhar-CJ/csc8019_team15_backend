@@ -58,7 +58,7 @@ public class ReviewServiceImplementationTest {
     @Test
     public void testCreateReviewtByNotRestaurantId() {
         Long restaurantId = 1L;
-        String token = "test";
+        String token = jwtService.generateToken("test");
         ReviewSubmit reviewSubmit = new ReviewSubmit();
         reviewSubmit.setToken(token);
         reviewSubmit.setRating(5d);
@@ -125,7 +125,7 @@ public class ReviewServiceImplementationTest {
         restaurant.setImagesLink(restaurant.imagesLink());
 
 
-        String token = "test";
+        String token = jwtService.generateToken("test");
         ReviewSubmit reviewSubmit = new ReviewSubmit();
         reviewSubmit.setToken(token);
         reviewSubmit.setRating(5d);

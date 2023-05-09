@@ -87,7 +87,8 @@ public class UserServiceImplementation implements UserService
 
     /**
      * Authenticates a user with the provided username and password and returns a UserDTO containing the user's data.
-     * For security reasons, the error message is "Invalid username or password" for both invalid username and password.
+     * For security reasons, the error message is "Invalid username or password" for both invalid username and password
+     * entered by the user during login.
      *
      * @param username the username of the user to authenticate
      * @param password the password of the user to authenticate
