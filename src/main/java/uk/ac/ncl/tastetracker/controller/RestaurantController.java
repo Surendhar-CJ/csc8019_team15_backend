@@ -59,7 +59,7 @@ public class RestaurantController {
      *
      * @param restaurantId the ID of the restaurant to be retrieved.
      *
-     * @return a ResponseEntity with a RestaurantDTO object and an HTTP status code of 200 OK.
+     * @return a ResponseEntity with a RestaurantDTO object and an HTTP status code : 200 OK.
      *
      * @throws ResourceNotFoundException if a restaurant with passed restaurantId is not found with an HTTP status code : 404 NOT FOUND
      * @throws InvalidInputException if the latitude and longitude present in the object is not valid or the UserLocation object is null
@@ -68,7 +68,7 @@ public class RestaurantController {
     @PostMapping("/restaurants/{restaurantId}")
     public ResponseEntity<RestaurantDTO> getRestaurantById(@PathVariable("restaurantId") Long restaurantId, @RequestBody UserLocation userLocation) {
         if(userLocation == null) {
-            throw new InvalidInputException("User location cannot be null");
+            throw new InvalidInputException("Invalid user location");
         }
         return new ResponseEntity<RestaurantDTO>(restaurantService.getRestaurantById(restaurantId, userLocation.getLatitude(), userLocation.getLongitude()), HttpStatus.OK);
     }
@@ -94,7 +94,7 @@ public class RestaurantController {
     @PostMapping("/restaurants")
     public ResponseEntity<List<RestaurantDTO>> getAllRestaurantsWithinAMileRadius(@RequestBody UserLocation userLocation) {
         if(userLocation == null) {
-            throw new InvalidInputException("User location cannot be null");
+            throw new InvalidInputException("Invalid user location");
         }
         return new ResponseEntity<>(restaurantService.getRestaurantsByLocation(userLocation.getLatitude(), userLocation.getLongitude()), HttpStatus.OK);
     }
