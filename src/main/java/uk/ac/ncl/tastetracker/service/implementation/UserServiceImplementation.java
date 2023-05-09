@@ -86,7 +86,8 @@ public class UserServiceImplementation implements UserService
 
 
     /**
-     * This method authenticates a user with the provided username and password and returns a UserDTO containing the user's data.
+     * Authenticates a user with the provided username and password and returns a UserDTO containing the user's data.
+     * For security reasons, the error message is "Invalid username or password" for both invalid username and password.
      *
      * @param username the username of the user to authenticate
      * @param password the password of the user to authenticate
@@ -101,12 +102,11 @@ public class UserServiceImplementation implements UserService
 
         User user = userRepository.findByUsername(username);
 
-        if (user == null || !username.matches(user.getUsername()) || username.matches("(?i)null")){
-            throw new UsernameNotFoundException("Invalid username");
+        if (user == null || !username.matches(user.getUsername()) || username.matches("(?i)null")
+                || !bCryptPasswordEncoder.matches(password, user.getPassword()) || password.matches("(?i)null")) {
+            throw new InvalidCredentialsException("Invalid username or password");
         }
-        else if(!bCryptPasswordEncoder.matches(password, user.getPassword()) || username.matches("(?i)null")) {
-            throw new InvalidCredentialsException("Invalid Password");
-        }
+
 
         return userDTOMapper.apply(user);
     }
