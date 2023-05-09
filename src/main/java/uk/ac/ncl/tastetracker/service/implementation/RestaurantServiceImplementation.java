@@ -155,10 +155,10 @@ public class RestaurantServiceImplementation implements RestaurantService {
             double restaurantLongitude = restaurant.getLongitude();
             double distance = restaurant.distanceFromUser(latitude, longitude, restaurantLatitude, restaurantLongitude);
 
-            boolean isOpen = restaurant.isOpen();
+           // boolean isOpen = restaurant.isOpen();&& isOpen
 
             //Checks if the restaurant is within one-mile radius and open and adds it to the list
-            if (distance <= ONE_MILE_IN_METERS && isOpen) {
+            if (distance <= ONE_MILE_IN_METERS ) {
 
                 restaurant.setDistanceFromUser(distance);
                 restaurant.setAverageCost(restaurant.averageCostOfADish());

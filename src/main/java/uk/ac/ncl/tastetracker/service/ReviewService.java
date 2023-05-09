@@ -19,6 +19,8 @@ public interface ReviewService {
      * Creates a new review for a restaurant based on the provided review data.
      *
      * @param reviewSubmit the data for the review to create
+     *
+     * @return ReviewDTO that represents the created review
      */
     ReviewDTO createReview(Long restaurantId, ReviewSubmit reviewSubmit);
 
@@ -31,5 +33,6 @@ public interface ReviewService {
      * @return a list of ReviewDTOs containing the retrieved reviews' data
      */
     List<ReviewDTO> getAllReviews(Long restaurantId);
+
 
 }

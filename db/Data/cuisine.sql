@@ -1,5 +1,5 @@
-INSERT INTO csc8019_team15.cuisine (name) VALUES
-	 ('American'),
+	 INSERT INTO csc8019_team15.cuisine (name) VALUES
+     ('American'),
 	 ('British'),
 	 ('Caribbean'),
 	 ('Chinese'),
@@ -7,12 +7,11 @@ INSERT INTO csc8019_team15.cuisine (name) VALUES
 	 ('Indian'),
 	 ('Italian'),
 	 ('Japanese'),
-	 ('Korean'),
-	 ('Mexican');
-INSERT INTO csc8019_team15.cuisine (name) VALUES
+	 ('Korean');
+      INSERT INTO csc8019_team15.cuisine (name) VALUES
+     ('Malaysian'),
+	 ('Mexican'),
 	 ('Spanish'),
-	 ('Thai'),
-	 ('Turkish'),
-	 ('Vietnamese');
+	 ('Turkish');
 
 
