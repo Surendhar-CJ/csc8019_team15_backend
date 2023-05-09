@@ -49,7 +49,8 @@ INSERT INTO `image`(restaurant_id, image_link) VALUES
 (12, 'https://s3-media0.fl.yelpcdn.com/bphoto/UwP9a_4Y8socFn7UPLClRg/o.jpg'),
 
 (13, 'https://aylagreystreet.co.uk/Ayla_-3.jpg'),
-(13, 'https://scontent-lhr8-2.xx.fbcdn.net/v/t39.30808-6/318559597_572096574691692_1567831137110307649_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=8bfeb9&_nc_ohc=sgI618RIPksAX_i1Nca&_nc_ht=scontent-lhr8-2.xx&oh=00_AfCL_VUWoVMf17HdZu3lxWOsjBjgsv6sfYBSgkCbDSeK9A&oe=6456BBFE'),(13, 'https://scontent-lhr8-1.xx.fbcdn.net/v/t39.30808-6/319159399_6044480995585567_8895332651675575584_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=730e14&_nc_ohc=AjDF9We7QR0AX_80kPw&_nc_ht=scontent-lhr8-1.xx&oh=00_AfACzf5CBWvOkT467BSk5vwwDb5YGWFPZX2uN6dANLbJTg&oe=6457F6A2'),
+(13, 'https://snapsaver.co.uk/wp-content/uploads/2022/03/2.jpg'),
+(13, 'https://i2-prod.chroniclelive.co.uk/incoming/article21729853.ece/ALTERNATES/s1227b/0_IBP_NEC_300921restaurant_10JPG.jpg'),
 
 (14, 'https://simlarestaurant.net/wp-content/uploads/2019/02/IMG_8216.jpg'),
 (14, 'https://simlarestaurant.net/wp-content/uploads/2019/02/IMG_8289.jpg'),
