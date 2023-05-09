@@ -58,8 +58,8 @@ public class RestaurantServiceImplementation implements RestaurantService {
      * Represents the Google Maps API URL key to fetch the approximate walking time.
      * The value is fetched from application.properties file.
      */
-    @Value("${google.maps.api.url}")
-    private String googleMapsURL;
+    @Value("${google.directions.api.url}")
+    private String googleDirectionsApiBaseUrl;
 
 
 
@@ -202,9 +202,7 @@ public class RestaurantServiceImplementation implements RestaurantService {
         validateLocation(latitude1, longitude1);
         validateLocation(latitude2, longitude2);
 
-        String urlString = googleMapsURL+ "?origin=" + latitude1 + "," + longitude1 +
-                "&destination=" + latitude2 + "," + longitude2 +
-                "&mode=walking&key=" + apiKey;
+        String urlString = buildGoogleDirectionsApiUrl(latitude1, longitude1, latitude2, longitude2);
 
         try {
             //Creating a URL object from the URL String and opens a connection to it using HttpURLConnection.
@@ -284,6 +282,31 @@ public class RestaurantServiceImplementation implements RestaurantService {
         }
 
     }
+
+
+
+
+
+    /**
+     * Builds Google Directions API Url based on the latitudes and longitudes passed as the arguments.
+     * It uses the Google Directions API base url and api key from the application.properties file
+     * to construct the url.
+     *
+     * @param latitude1 - latitude of the first location
+     * @param longitude1 - longitude of the first location
+     * @param latitude2 - latitude of the second location
+     * @param longitude2 - longitude of the second location
+     *
+     * @return the Google Maps API url build from the arguments passed
+     */
+    private String buildGoogleDirectionsApiUrl(double latitude1, double longitude1, double latitude2, double longitude2) {
+        return googleDirectionsApiBaseUrl.replace("{latitude1}", String.valueOf(latitude1))
+                .replace("{longitude1}", String.valueOf(longitude1))
+                .replace("{latitude2}", String.valueOf(latitude2))
+                .replace("{longitude2}", String.valueOf(longitude2))
+                .replace("{apiKey}", apiKey);
+    }
+
 
 
 }
