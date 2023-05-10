@@ -1,6 +1,5 @@
 package uk.ac.ncl.tastetracker.service.implementation;
 
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,9 +9,17 @@ import org.springframework.test.context.junit4.SpringRunner;
 import uk.ac.ncl.tastetracker.entity.User;
 import uk.ac.ncl.tastetracker.exception.custom.InvalidCredentialsException;
 import uk.ac.ncl.tastetracker.exception.custom.InvalidInputException;
-
 import static org.junit.Assert.assertThrows;
 
+
+
+
+/**
+ * UserServiceImplementationTest is used to test RestaurantServiceImplementation class.
+ *
+ * @author Sandy Zhang
+ * @since 08-05-2023
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class UserServiceImplementationTest {

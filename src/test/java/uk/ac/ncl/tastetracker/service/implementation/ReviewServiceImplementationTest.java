@@ -12,14 +12,20 @@ import uk.ac.ncl.tastetracker.exception.custom.InvalidInputException;
 import uk.ac.ncl.tastetracker.exception.custom.ResourceNotFoundException;
 import uk.ac.ncl.tastetracker.repository.RestaurantRepository;
 import uk.ac.ncl.tastetracker.requestBody.ReviewSubmit;
-
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
-
 import static org.junit.Assert.assertThrows;
 
+
+
+/**
+ * ReviewServiceImplementationTest is used to test RestaurantServiceImplementation class.
+ *
+ * @author Sandy Zhang
+ * @since 08-05-2023
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class ReviewServiceImplementationTest {

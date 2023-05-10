@@ -24,6 +24,9 @@ import static org.mockito.Mockito.when;
 
 /**
  * RestaurantServiceImplementationTest is used to test RestaurantServiceImplementation class.
+ *
+ * @author Sandy Zhang
+ * @since 08-05-2023
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest

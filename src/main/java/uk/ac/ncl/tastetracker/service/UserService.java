@@ -6,7 +6,7 @@ import uk.ac.ncl.tastetracker.entity.User;
 /**
  * Defines methods for managing user accounts and authentication.
  *
- * @author Surendhar Chandran Jayapal
+ * @author Jiang He
  * @version 1.5 (06-05-2023)
  * @since 1.1 (22-04-2023)
  */

@@ -3,7 +3,7 @@ package uk.ac.ncl.tastetracker.utils;
 /**
  * This class contains Regex patterns for email address, username and password
  *
- * @author Surendhar Chandran Jayapal
+ * @author Jiang He
  * @version 1.5 (06-05-2023)
  * @since 1.2 (28-04-2023)
  */

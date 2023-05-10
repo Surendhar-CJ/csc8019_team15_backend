@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 /**
  * The UserController class handles REST API requests for user registration, login, retrieval, and deletion.
  *
- * @author Surendhar Chandran Jayapal
+ * @author Jiang He
  * @version 1.5 (06-05-2023)
  * @since 1.1 (22-04-2023)
  */
