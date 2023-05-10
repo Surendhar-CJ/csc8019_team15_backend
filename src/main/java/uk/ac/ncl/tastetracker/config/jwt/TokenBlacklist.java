@@ -1,11 +1,7 @@
 package uk.ac.ncl.tastetracker.config.jwt;
 
 import org.springframework.stereotype.Component;
-import uk.ac.ncl.tastetracker.entity.User;
 import uk.ac.ncl.tastetracker.exception.custom.InvalidCredentialsException;
-import uk.ac.ncl.tastetracker.exception.custom.InvalidInputException;
-import uk.ac.ncl.tastetracker.exception.custom.ResourceNotFoundException;
-
 import java.util.HashSet;
 import java.util.Set;
 
