@@ -13,12 +13,10 @@ import java.time.LocalTime;
 
 
 /**
- * This class serves as a global exception handler.
+ * Serves as an exception handler for the backend system.
  * Exceptions thrown are modified to give a proper response to the client with appropriate status code, message and time.
  *
  * @author Surendhar Chandran Jayapal
- * @version 1.5 (06-05-2023)
- * @since 1.0 (17-04-2023)
  */
 @ControllerAdvice
 public final class GlobalExceptionHandler {

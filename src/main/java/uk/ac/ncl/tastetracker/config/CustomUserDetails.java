@@ -13,8 +13,6 @@ import java.util.Collection;
  * implemented and used.
  *
  * @author Surendhar Chandran Jayapal
- * @version 1.5 (Date - 06-05-2023)
- * @since 1.0 (Date - 17-04-2023)
  */
 public final class CustomUserDetails implements UserDetails {
 

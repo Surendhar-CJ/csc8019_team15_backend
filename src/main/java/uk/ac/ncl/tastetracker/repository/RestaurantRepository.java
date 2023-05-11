@@ -5,12 +5,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 
 /**
- * The RestaurantRepository interface extends the JpaRepository interface to provide standard CRUD methods for the Restaurant entity.
+ * RestaurantRepository interface extends the JpaRepository interface to provide standard CRUD methods for the Restaurant entity.
  * It provides an additional method "findByRestaurantID" to retrieve a Restaurant entity by its restaurantID.
  *
  * @author Surendhar Chandran Jayapal
- * @version 1.5 (06-05-2023)
- * @since 1.1 (17-04-2023)
  */
 public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
 

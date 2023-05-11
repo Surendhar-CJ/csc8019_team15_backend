@@ -3,16 +3,14 @@ package uk.ac.ncl.tastetracker.dto.dtomapper;
 import uk.ac.ncl.tastetracker.dto.ReviewDTO;
 import uk.ac.ncl.tastetracker.entity.Review;
 import org.springframework.stereotype.Component;
-
 import java.util.function.Function;
+
 
 
 /**
  * This class is used to map a Review object to a ReviewDTO object by implementing Function interface.
  *
  * @author Surendhar Chandran Jayapal
- * @version 1.5 (06-05-2023)
- * @since 1.1 (22-04-2023)
  */
 @Component
 public final class ReviewDTOMapper implements Function<Review, ReviewDTO> {

@@ -6,11 +6,11 @@ import java.util.List;
 
 
 /**
- * This interface defines methods for accessing restaurant data.
+ * Defines methods for accessing restaurant data.
+ * This interface serves the interface for implementing Review based server logic and functions.
+ * It has two methods, one method is to create review and the another method is to fetch all the reviews.
  *
  * @author Surendhar Chandran Jayapal
- * @version 1.5 (06-05-2023)
- * @since 1.1 (22-04-2023)
  */
 public interface ReviewService {
 

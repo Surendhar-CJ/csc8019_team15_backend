@@ -13,8 +13,6 @@ import java.time.LocalTime;
  * It uses Lombok annotations to generate getters, setters, and all argument constructor.
  *
  * @author Surendhar Chandran Jayapal
- * @version 1.5 (06-05-2023)
- * @since 1.0 (17-04-2023)
  */
 @Getter
 @Setter

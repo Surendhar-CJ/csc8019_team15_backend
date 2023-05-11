@@ -6,12 +6,11 @@ import org.springframework.stereotype.Component;
 import java.util.function.Function;
 
 
+
 /**
  * This class is used to map a Restaurant object to a RestaurantDTO object by implementing Function interface.
  *
  * @author Surendhar Chandran Jayapal
- * @version 1.5 (06-05-2023)
- * @since 1.0 (17-04-2023)
  */
 @Component
 public final class RestaurantDTOMapper implements Function<Restaurant, RestaurantDTO> {

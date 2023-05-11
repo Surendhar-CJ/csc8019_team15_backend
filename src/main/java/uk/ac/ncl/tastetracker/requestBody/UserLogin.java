@@ -5,12 +5,10 @@ import lombok.Data;
 
 
 /**
- * This class represents the user login which contains username and password.
+ * UserLogin class represents the user login which contains username and password.
  * It uses Lombok annotations to generate getters, setters, all argument constructor, equals/hashcode and toString methods.
  *
- * @author Surendhar Chandran Jayapal
- * @version 1.5 (06-05-2023)
- * @since 1.4 (01-05-2023)
+ * @author Jiang He
  */
 @Data
 @AllArgsConstructor

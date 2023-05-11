@@ -1,11 +1,10 @@
 package uk.ac.ncl.tastetracker.utils;
 
 /**
- * This class contains Regex patterns for email address, username and password
+ * Regex pattern class contains Regex patterns for email address, username and password.
+ * These are used to validate the user details with specific requirement based on regex pattern.
  *
  * @author Jiang He
- * @version 1.5 (06-05-2023)
- * @since 1.2 (28-04-2023)
  */
 public final class RegexPattern {
 

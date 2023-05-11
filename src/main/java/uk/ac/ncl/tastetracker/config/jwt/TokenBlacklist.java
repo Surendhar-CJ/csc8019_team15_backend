@@ -10,8 +10,6 @@ import java.util.Set;
  * TokenBlackList class is used to check and store the blacklisted tokens if the user logs out.
  *
  * @author Surendhar Chandran Jayapal
- * @version 1.5 (Date - 06-05-2023)
- * @since 1.4 (Date - 01-05-2023)
  */
 @Component
 public class TokenBlacklist {

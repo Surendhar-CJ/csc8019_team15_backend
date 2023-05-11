@@ -15,12 +15,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 
+
 /**
- * This class implements the UserService interface to interact with UserRepository.
+ * UserServiceImplementation class implements the UserService interface to interact with UserRepository.
+ * It implements methods for user registration and user login.
+ * It contains all the user based server logics and functions.
  *
  * @author Surendhar Chandran Jayapal
- * @version 1.5 (06-05-2023)
- * @since 1.1 (22-04-2023)
  */
 @Service
 public class UserServiceImplementation implements UserService
@@ -108,7 +109,7 @@ public class UserServiceImplementation implements UserService
             throw new InvalidCredentialsException("Invalid username or password");
         }
 
-
+        //Maps a User to UserDTO
         return userDTOMapper.apply(user);
     }
 

@@ -7,11 +7,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 
 /**
- * The ReviewRepository interface extends the JpaRepository interface to provide standard CRUD methods for the Review entity.
+ * ReviewRepository interface extends the JpaRepository interface to provide standard CRUD methods for the Review entity.
+ * It provides an additional method "findByUserAndRestaurant" for finding the review based on user who reviewed
+ * and the restaurant which is associated with.
  *
  * @author Surendhar Chandran Jayapal
- * @version 1.5 (06-05-2023)
- * @since 1.1 (22-04-2023)
  */
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 

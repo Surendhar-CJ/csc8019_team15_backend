@@ -25,11 +25,11 @@ import java.util.stream.Collectors;
 
 
 /**
- * This class implements the ReviewService interface that provides methods to create, read, update, and delete restaurant reviews.
+ * ReviewServiceImplementation class implements the ReviewService interface that provides methods to create, read, update, and delete restaurant reviews.
+ * It implements methods for creating a review and fetching all the reviews.
+ * It contains all the review based server logics and functions.
  *
  * @author Surendhar Chandran Jayapal
- * @version 1.5 (06-05-2023)
- * @since 1.1 (22-04-2023)
  */
 @Service
 public class ReviewServiceImplementation  implements ReviewService {
@@ -121,6 +121,7 @@ public class ReviewServiceImplementation  implements ReviewService {
         restaurant.setOverallRating(updateOverallRating(restaurant));
         restaurantRepository.save(restaurant);
 
+        //Maps Review to ReviewDTO
         return reviewDTOMapper.apply(review);
 
     }
@@ -155,6 +156,7 @@ public class ReviewServiceImplementation  implements ReviewService {
 
         List<Review> reviews = restaurant.getReviews();
 
+        //Maps a list of Reviews to a list of ReviewDTO
         return reviews.stream()
                 .map(reviewDTOMapper)
                 .collect(Collectors.toList());
@@ -261,5 +263,6 @@ public class ReviewServiceImplementation  implements ReviewService {
         }
 
     }
+
 
 }

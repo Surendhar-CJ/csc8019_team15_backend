@@ -21,19 +21,25 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
 
 
+
 /**
   * The SecurityConfig class is responsible for configuring Spring Security to authenticate and authorize incoming requests based on the defined rules.
   * It defines the user details service, password encoder, authentication provider, and security filter chain.
   *
   * @author Surendhar Chandran Jayapal
- * @version 1.5 (Date - 06-05-2023)
- * @since 1.0 (Date - 17-04-2023)
   */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
+    /**
+     * UserRepository to interact with the User entity in the database.
+     */
     private final UserRepository userRepository;
+
+    /**
+     * JWTFilter dependency for intercepting incoming HTTP requests.
+     */
     private final JWTFilter jwtFilter;
 
 

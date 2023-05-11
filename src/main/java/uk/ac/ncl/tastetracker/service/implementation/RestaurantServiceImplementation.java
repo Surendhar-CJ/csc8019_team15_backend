@@ -27,12 +27,12 @@ import java.util.stream.Collectors;
 
 
 /**
- * This class implements the RestaurantService interface and provides methods to interact with the RestaurantRepository
- * to retrieve restaurant information.
+ * RestaurantServiceImplementation class implements the RestaurantService interface and provides methods to interact with the RestaurantRepository
+ * to retrieve restaurant information. This class also makes API call to Google Directions API to calculate the approximate walking time
+ * between the two locations.
+ * This contains all the restaurant based server logic and functions.
  *
  * @author Surendhar Chandran Jayapal
- * @version 1.5 (06-05-2023)
- * @since 1.0 (17-04-2023)
  */
 @Service
 public class RestaurantServiceImplementation implements RestaurantService {
@@ -44,18 +44,19 @@ public class RestaurantServiceImplementation implements RestaurantService {
 
     /**
      * RestaurantDTOMapper to map Restaurant objects to RestaurantDTO
+     * DTO - Data Transfer Object
      */
     private final RestaurantDTOMapper restaurantDTOMapper;
 
     /**
-     * Represents the Google Maps API key to fetch the approximate walking time.
+     * Represents the Google Directions API key to fetch the approximate walking time.
      * The value is fetched from application.properties file.
      */
     @Value("${api.key}")
     private String apiKey;
 
     /**
-     * Represents the Google Maps API URL key to fetch the approximate walking time.
+     * Represents the Google Directions API URL key to fetch the approximate walking time.
      * The value is fetched from application.properties file.
      */
     @Value("${google.directions.api.url}")
@@ -107,7 +108,6 @@ public class RestaurantServiceImplementation implements RestaurantService {
         if(restaurant == null) {
             throw new ResourceNotFoundException("Restaurant not found");
         }
-
 
         double restaurantLatitude = restaurant.getLatitude();
         double restaurantLongitude = restaurant.getLongitude();
@@ -255,12 +255,12 @@ public class RestaurantServiceImplementation implements RestaurantService {
 
 
     /**
-     * This method validates if the location is valid or not
+     * Validates the location by validating the latitude and longitude passed as the arguments.
      *
      * @param latitude latitude of the location
      * @param longitude longitude of the location
      *
-     * @throws InvalidInputException if the latitude and longitude passed are invalid
+     * @throws InvalidInputException if the latitude or longitude passed is invalid
      */
     private void validateLocation(Double latitude, Double longitude) {
         if (latitude == null || Double.isNaN(latitude)) {
@@ -297,7 +297,7 @@ public class RestaurantServiceImplementation implements RestaurantService {
      * @param latitude2 - latitude of the second location
      * @param longitude2 - longitude of the second location
      *
-     * @return the Google Maps API url build from the arguments passed
+     * @return the Google Directions API url build from the arguments passed
      */
     private String buildGoogleDirectionsApiUrl(double latitude1, double longitude1, double latitude2, double longitude2) {
         return googleDirectionsApiBaseUrl.replace("{latitude1}", String.valueOf(latitude1))

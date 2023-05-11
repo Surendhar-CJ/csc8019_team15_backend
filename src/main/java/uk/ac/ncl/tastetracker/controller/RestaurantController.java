@@ -16,13 +16,11 @@ import java.util.List;
 
 
 /**
- * The RestaurantController class defines REST API endpoints handles HTTP requests and returns the response in a RESTful way.
+ * RestaurantController class defines REST API endpoints handles HTTP requests and returns the response in a RESTful way.
  * This class contains two end points for fetching restaurants details. One that fetches a restaurant by restaurant id and
  * the other method fetches a list of open restaurants within 1-mile radius of user's current location.
  *
  * @author Surendhar Chandran Jayapal
- * @version 1.5 (06-05-2023)
- * @since 1.0 (17-04-2023)
  */
 @RestController
 @RequestMapping("/food_finder")

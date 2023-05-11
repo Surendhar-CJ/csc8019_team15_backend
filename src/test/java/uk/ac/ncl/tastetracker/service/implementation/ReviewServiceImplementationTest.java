@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import uk.ac.ncl.tastetracker.config.jwt.JWTService;
 import uk.ac.ncl.tastetracker.dto.dtomapper.RestaurantDTOMapper;
@@ -24,22 +25,33 @@ import static org.junit.Assert.assertThrows;
  * ReviewServiceImplementationTest is used to test RestaurantServiceImplementation class.
  *
  * @author Sandy Zhang
- * @since 08-05-2023
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class ReviewServiceImplementationTest {
 
+    /**
+     * ReviewServiceImplementation dependency to test the methods of that class
+     */
     @Autowired
     private ReviewServiceImplementation reviewServiceImplementation;
 
+    /**
+     * RestaurantServiceImplementation dependency
+     */
     @Autowired
     private RestaurantServiceImplementation restaurantServiceImplementation;
 
+    /**
+     * RestaurantDTOMapper that maps  RestaurantToRestaurantDTOMapper
+     */
     @Autowired
     private RestaurantDTOMapper restaurantDTOMapper;
 
-    @Autowired
+    /**
+     * RestaurantRespository dependency
+     */
+    @MockBean
     private RestaurantRepository restaurantRepository;
 
     /**
@@ -48,8 +60,12 @@ public class ReviewServiceImplementationTest {
     @Autowired
     private JWTService jwtService;
 
+
+    /**
+     * Tests create review by id invalid id
+     */
     @Test
-    public void testCreateReviewtByIdInvalidId() {
+    public void testCreateReviewByIdInvalidId() {
         String token = jwtService.generateToken("test");
         ReviewSubmit reviewSubmit = new ReviewSubmit();
         reviewSubmit.setToken(token);
@@ -61,8 +77,13 @@ public class ReviewServiceImplementationTest {
         });
     }
 
+
+
+    /**
+     * Test create review by invalid restaurant id
+     */
     @Test
-    public void testCreateReviewtByNotRestaurantId() {
+    public void testCreateReviewByNotRestaurantId() {
         Long restaurantId = 1L;
         String token = jwtService.generateToken("test");
         ReviewSubmit reviewSubmit = new ReviewSubmit();
@@ -75,8 +96,14 @@ public class ReviewServiceImplementationTest {
         });
     }
 
+
+
+
+    /**
+     * Test create review by invalid token
+     */
     @Test
-    public void testCreateReviewtByInvalidToken() {
+    public void testCreateReviewByInvalidToken() {
         Restaurant restaurant = new Restaurant();
         restaurant.setRestaurantID(1L);
         restaurant.setName("Restaurant1");
@@ -137,12 +164,23 @@ public class ReviewServiceImplementationTest {
         reviewSubmit.setRating(5d);
         reviewSubmit.setComment("comment");
 
-        assertThrows(InvalidInputException.class, () -> {
+        assertThrows(ResourceNotFoundException.class, () -> {
             reviewServiceImplementation.createReview(restaurant.getRestaurantID(), reviewSubmit);
         });
     }
 
 
+
+    /**
+     * This method returns the approximate walking time between two locations by assuming a constant speed of 1.4 m/s
+     * This method is used to avoid calling Google Directions API during testing.
+     *
+     * @param startLatitude latitude of the starting point
+     * @param startLongitude longitude of the starting point
+     * @param endLatitude latitude of the ending point
+     * @param endLongitude longitude of the ending point
+     * @return approximate walking time between two locations
+     */
     private double walkingTimeFromUserTest(double startLatitude, double startLongitude, double endLatitude, double endLongitude) {
         // Calculate approximate walking time based on distance and average walking speed
         double distance = calculateDistance(startLatitude, startLongitude, endLatitude, endLongitude);
@@ -154,6 +192,7 @@ public class ReviewServiceImplementationTest {
 
         return Double.parseDouble(df.format(walkingTimeMinutes));
     }
+
 
 
     /**
@@ -185,4 +224,5 @@ public class ReviewServiceImplementationTest {
 
         return Double.parseDouble(df.format(distance));
     }
+
 }

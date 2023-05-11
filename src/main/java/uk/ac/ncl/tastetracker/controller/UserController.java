@@ -20,10 +20,10 @@ import org.springframework.web.bind.annotation.*;
 
 /**
  * The UserController class handles REST API requests for user registration, login, retrieval, and deletion.
+ * This class handles HTTP requests and returns the response in a RESTful way.
+ * This class contains two endpoints
  *
  * @author Jiang He
- * @version 1.5 (06-05-2023)
- * @since 1.1 (22-04-2023)
  */
 @RestController
 @RequestMapping("/food_finder/users")
