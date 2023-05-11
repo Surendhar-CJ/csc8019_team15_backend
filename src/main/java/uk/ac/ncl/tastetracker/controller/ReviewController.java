@@ -17,13 +17,11 @@ import java.util.List;
 
 
 /**
- * The ReviewController class defines REST API endpoints for managing reviews of restaurants and
- * handles HTTP requests and returns the response in a RESTful way.
+ * ReviewController class defines REST API endpoints for managing reviews of restaurants
+ * and handles HTTP requests and returns the response in a RESTful way.
  * This class contains two endpoints, one for submitting a review and one fetching all the reviews of a restaurant.
  *
  * @author Surendhar Chandran Jayapal
- * @version 1.5 (06-05-2023)
- * @since 1.1 (22-04-2023)
  */
 @RestController
 @RequestMapping("/food_finder/restaurants")

@@ -5,10 +5,10 @@ import uk.ac.ncl.tastetracker.entity.User;
 
 /**
  * Defines methods for managing user accounts and authentication.
+ * This interface serves the interface for implementing User based server logic and functions.
+ * It has two methods, one for user registration and the other for user login.
  *
- * @author Surendhar Chandran Jayapal
- * @version 1.5 (06-05-2023)
- * @since 1.1 (22-04-2023)
+ * @author Jiang He
  */
 public interface UserService {
 

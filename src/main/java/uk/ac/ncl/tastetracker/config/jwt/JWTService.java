@@ -22,8 +22,6 @@ import java.util.function.Function;
  * This class also contains methods to extract username, expiration date, key and claims from the token
  *
  * @author Surendhar Chandran Jayapal
- * @version 1.5 (Date - 06-05-2023)
- * @since 1.3 (Date - 28-04-2023)
  */
 @Component
 public class JWTService {

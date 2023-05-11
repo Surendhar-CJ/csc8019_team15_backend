@@ -10,11 +10,9 @@ import lombok.NoArgsConstructor;
  * OperationHour class represents the OperationHour entity. An instance of the class can be represented by a field in the database.
  * This class uses Lombok annotations to generate getters, setters, no argument constructor, all argument constructor, equals/hashcode and toString methods.
  * NOTE: Here, Spring Data JPA/Hibernate is used only to fetch results from the database(so table mapping is required)
- *       and not for creating the schema (so, constraints are not mentioned in the fields explicitly)
+ *       and not for creating the schema (so, constraints are not mentioned in the fields)
  *
  * @author Surendhar Chandran Jayapal
- * @version 1.5 (06-05-2023)
- * @since 1.0 (17-04-2023)
  */
 @Data
 @NoArgsConstructor

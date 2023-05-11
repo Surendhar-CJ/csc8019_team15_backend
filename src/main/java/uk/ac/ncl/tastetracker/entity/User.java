@@ -9,11 +9,10 @@ import lombok.NoArgsConstructor;
 /**
  * User class represents the User entity. An instance of the class can be represented by a field in the database.
  * This class uses Lombok annotations to generate getters, setters, no argument constructor, equals/hashcode and toString methods.
- * NOTE: Here, Spring Data JPA/Hibernate is used only to fetch results from the database(so table mapping is required) and not creating a schema.
+ * NOTE: Here, Spring Data JPA/Hibernate is used only to fetch results from the database(so table mapping is required)
+ *      and not creating a schema (so, constraints are not mentioned in the fields).
  *
- * @author Surendhar Chandran Jayapal
- * @version 1.5 (06-05-2023)
- * @since 1.1 (22-04-2023)
+ * @author Jiang He
  */
 @Data
 @NoArgsConstructor

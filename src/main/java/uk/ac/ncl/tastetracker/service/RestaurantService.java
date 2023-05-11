@@ -4,11 +4,11 @@ import uk.ac.ncl.tastetracker.dto.RestaurantDTO;
 import java.util.List;
 
 /**
- * This interface defines methods for accessing restaurant data.
+ * Defines methods for accessing restaurant data.
+ * This interface serves the interface for implementing Restaurant based server logic and functions.
+ * It has two methods, one method is to get restaurant by id and the another method is to get the list of all the restaurants by location.
  *
  * @author Surendhar Chandran Jayapal
- * @version 1.5 (06-05-2023)
- * @since 1.0 (17-04-2023)
  */
 public interface RestaurantService {
 

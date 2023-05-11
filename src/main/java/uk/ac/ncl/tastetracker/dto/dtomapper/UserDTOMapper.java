@@ -5,12 +5,12 @@ import uk.ac.ncl.tastetracker.entity.User;
 import org.springframework.stereotype.Component;
 import java.util.function.Function;
 
+
+
 /**
  * This class is used to map a User object to a USerDTO object by implementing Function interface.
  *
- * @author Surendhar Chandran Jayapal
- * @version 1.5 (06-05-2023)
- * @since 1.1 (22-04-2023)
+ * @author Jiang He
  */
 @Component
 public final class UserDTOMapper implements Function<User, UserDTO> {

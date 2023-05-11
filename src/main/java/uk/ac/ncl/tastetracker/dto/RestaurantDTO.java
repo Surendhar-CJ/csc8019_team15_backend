@@ -3,9 +3,10 @@ package uk.ac.ncl.tastetracker.dto;
 import java.util.List;
 
 /**
- * This record represents a RestaurantDTO (Data Transfer Object), denoting the class as immutable to prevent external sources from manipulating it.
+ * This record represents a RestaurantDTO (Data Transfer Object), denoting it as immutable to prevent external sources from manipulating it.
  * The purpose of this record is to provide a representation of a restaurant object to be sent as a response to
  * a client request.
+ * By default, the record denotes all the fields as private and final and contains only getter methods.
  *
  * @param id The ID of the restaurant
  * @param name The name of the restaurant
@@ -22,8 +23,6 @@ import java.util.List;
  * @param distanceFromUser The distance from the user to the restaurant
  *
  * @author Surendhar Chandran Jayapal
- * @version 1.5 (06-05-2023)
- * @since 1.0 (17-04-2023)
  */
 public record RestaurantDTO (
 

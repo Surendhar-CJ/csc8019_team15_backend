@@ -6,12 +6,10 @@ import lombok.NoArgsConstructor;
 
 
 /**
- * The ReviewSubmit class represents a review submission made by a user for a restaurant.
+ * ReviewSubmit class represents a review submission made by a user for a restaurant.
  * It uses Lombok annotations to generate getters, setters, all argument constructor, equals/hashcode and toString methods.
  *
  * @author Surendhar Chandran Jayapal
- * @version 1.5 (06-05-2023)
- * @since 1.1 (22-04-2023)
  */
 @Data
 @NoArgsConstructor

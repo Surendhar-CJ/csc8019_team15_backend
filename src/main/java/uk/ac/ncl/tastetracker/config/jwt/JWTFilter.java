@@ -23,8 +23,6 @@ import java.io.IOException;
  * their authentication context in the SecurityContextHolder.
  *
  * @author Surendhar Chandran Jayapal
- * @version 1.5 (Date - 06-05-2023)
- * @since 1.3 (Date - 28-04-2023)
  */
 @Component
 public class JWTFilter extends OncePerRequestFilter {

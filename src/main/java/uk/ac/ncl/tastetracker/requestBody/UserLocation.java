@@ -5,12 +5,10 @@ import lombok.Data;
 
 
 /**
- * This class represents the user location which contains latitude and longitude
+ * User Location class represents the user location which contains latitude and longitude
  * It uses Lombok annotations to generate getters, setters, all argument constructor, equals/hashcode and toString methods.
  *
  * @author Surendhar Chandran Jayapal
- * @version 1.5 (06-05-2023)
- * @since 1.3 (28-04-2023)
  */
 @Data
 @AllArgsConstructor

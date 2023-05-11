@@ -1,11 +1,7 @@
 package uk.ac.ncl.tastetracker.config.jwt;
 
 import org.springframework.stereotype.Component;
-import uk.ac.ncl.tastetracker.entity.User;
 import uk.ac.ncl.tastetracker.exception.custom.InvalidCredentialsException;
-import uk.ac.ncl.tastetracker.exception.custom.InvalidInputException;
-import uk.ac.ncl.tastetracker.exception.custom.ResourceNotFoundException;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,8 +10,6 @@ import java.util.Set;
  * TokenBlackList class is used to check and store the blacklisted tokens if the user logs out.
  *
  * @author Surendhar Chandran Jayapal
- * @version 1.5 (Date - 06-05-2023)
- * @since 1.4 (Date - 01-05-2023)
  */
 @Component
 public class TokenBlacklist {
